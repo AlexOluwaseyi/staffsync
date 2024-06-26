@@ -2,7 +2,9 @@
 
 import unittest
 from models.advocate import SE
-from models.permission import AccessLevel
+from models.permission import AccessLevel, roles_description
+from models.employee import Employee
+# from models.base_model import BaseModel
 
 
 class TestAdvocate(unittest.TestCase):
@@ -36,7 +38,13 @@ class TestAdvocate(unittest.TestCase):
         self.assertTrue(hasattr(self.adv, 'role'))
 
     def test_role(self):
-        self.assertEqual(self.adv.role, AccessLevel.SE)
+        self.assertEqual(self.adv.role, self.adv.__class__.__name__)
+
+    def test_inheritance(self):
+        self.assertTrue(issubclass(SE, Employee), "SE should inherit from Employee")
+
+    def test_inheritance_2(self):
+        self.assertTrue(issubclass(SE, Employee), "SE should inherit from Employee")
 
 
 class TestMultipleAdvocates(unittest.TestCase):
@@ -66,6 +74,7 @@ class TestMultipleAdvocates(unittest.TestCase):
 
     def test_no_role(self):
         """No roles defined"""
-        adv1 = SE('SE')
-        self.assertIsNone(adv1.staff_id)
-        self.assertEqual(adv1.role, AccessLevel.SE)
+        from models.manager import TM
+        adv2 = TM()
+        self.assertIsNone(adv2.staff_id)
+        self.assertEqual(adv2.role, adv2.__class__.__name__)

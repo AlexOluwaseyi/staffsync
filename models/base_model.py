@@ -1,17 +1,11 @@
 #!/usr/bin/python3
-"""
-BaseModel for WellNourish project.
 
-Keyword arguments:
-class BaseModel -- The name of the basemodel class which will be the basics
-for all other models, to ease scalability.
-"""
 from uuid import uuid4
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime, Integer
-import models
+from sqlalchemy import Column, String, DateTime, Integer, Boolean
 from flask import session
+import models
 
 
 time = "%Y-%m-%dT%H:%M:%S.%f"
@@ -22,10 +16,16 @@ class BaseModel:
     """
     BaseModel class definition
     """
-    id = Column(String(60), primary_key=True)
-    # staff_id = Column(Integer, primary_key=True, nullable=True)
+    id = Column(String(60))
+    staff_id = Column(Integer, primary_key=True, nullable=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
+    first_name = Column(String(256), nullable=True)
+    last_name = Column(String(256), nullable=True)
+    is_active = Column(Boolean, default=True)
+    email = Column(String(256), nullable=True)
+    password = Column(String(256), nullable=True)
+    name = Column(String(256), nullable=True)
 
     def __init__(self, *args, **kwargs):
         """Initializer for BaseModel class"""
@@ -44,15 +44,22 @@ class BaseModel:
             if kwargs.get("staff_id", None):
                 self.staff_id = kwargs['staff_id']
             else:
-                print('here for None staff_id')
                 self.staff_id = None
             if kwargs.get("id", None) is None:
                 self.id = str(uuid4())
+            if kwargs.get("is_active", None) is None:
+                self.is_active = True
         else:
             self.id = str(uuid4())
             self.staff_id = None
             self.created_at = datetime.now()
             self.updated_at = self.created_at
+            self.is_active = True
+
+    def set_name(self):
+        """Set display name based on first and last name"""
+        fullname = self.first_name + ' ' + self.last_name
+        self.name = fullname
 
     def __str__(self):
         """String Representation of the BaseModel Object"""

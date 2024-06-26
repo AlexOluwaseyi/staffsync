@@ -1,17 +1,18 @@
 import unittest
-from models.base_model import BaseModel
+# from models.base_model import BaseModel
+from models.employee import Employee
 
 
-class TestBaseModel(unittest.TestCase):
+class TestEmployeeModel(unittest.TestCase):
     """Base Model test cases"""
 
     @classmethod
     def setUpClass(self):
-        self.base1 = BaseModel(staff_id=4219)
+        self.base1 = Employee(staff_id=4219)
 
     def test_instance(self):
         """Test object instances"""
-        self.assertTrue(isinstance(self.base1, BaseModel))
+        self.assertTrue(isinstance(self.base1, Employee))
 
     def test_has_id(self):
         """"test base model init"""
@@ -31,5 +32,5 @@ class TestBaseModel(unittest.TestCase):
 
     def test_no_staff_id(self):
         """No staff_id"""
-        base1 = BaseModel()
+        base1 = Employee()
         self.assertIsNone(base1.staff_id)

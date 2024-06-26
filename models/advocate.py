@@ -1,27 +1,51 @@
 #!/usr/bin/python3
 
-from models.base_role import BaseRole
+from models.base_model import Base
+from models.employee import Employee
 from models.permission import AccessLevel, Permission, access_level
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime, Integer
+# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer
+import models
 
 
-class SE(BaseRole):
+class SE(Employee, Base):
     """Class definition for SEs
     """
-    # __tablename__ = 'advocates'
+    __tablename__ = 'advocates'
+    __table_args__ = {'extend_existing': True}
 
-    role = Column(Integer, nullable=False)
+    reports_to = Column(Integer, nullable=True)
 
     schedule = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        role = kwargs.get('role', 'SE')
-        if role not in access_level:
-            raise ValueError(f"Invalid role: {role}")
-        self.role = access_level[role].value
         ...
+
+    def set_manager(self, man_id):
+        """Set the manager for SE"""
+        if self.role == 'TL':
+            manager = models.storage.get_manager('TL')
+            if manager:
+                self.reports_to = manager.staff_id
+            else:
+                self.reports_to = None  # Handle case where no manager is found
+        elif self.role =='NH':
+            manager = models.storage.get_manager('NH')
+            if manager:
+                self.reports_to = manager.staff_id
+            else:
+                self.reports_to = None
+        else:
+            manager = models.storage.get(TM, man_id)
+            if manager:
+                self.reports_to = manager.staff_id
+            else:
+                self.reports_to = None
+
+    def get_manager(self):
+        """Get the manager for SE"""
+        return self.reports_to
 
     def generate_schedule(self):
         """Generate a new schedule for SE"""
@@ -45,8 +69,30 @@ class SE(BaseRole):
         return current_schedule
 
 
+# class T2(BaseRole):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         role = kwargs.get('role', 'T2')
+#         if role not in access_level:
+#             raise ValueError(f"Invalid role: {role}")
+#         self.role = access_level[role].value
+#         ...
+
+
+# class TL(BaseRole):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         role = kwargs.get('role', 'TL')
+#         if role not in access_level:
+#             raise ValueError(f"Invalid role: {role}")
+#         self.role = access_level[role].value
+#         ...
+
+
 if __name__ == "__main__":
-    adv = SE()
-    for i in range(12):
-        adv.generate_schedule()
-    print(adv.schedule)
+    from models.manager import TM
+    adv = TM(staff_id=3124)
+    print(f'is active - {adv.is_active}')
+    print(f'desc - {adv.desc}')
+    print(f'role - {adv.role}')
+    print(adv.access_level)
