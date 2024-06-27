@@ -14,20 +14,16 @@ import models
 
 class DBStorage:
     """
-    Interacts with the a particular database
+    Interacts with a particular database
     """
     __engine = None
     __session = None
+    # _class = ['GM', 'TM', 'OM', 'DM', 'SE']
     _class = [GM, TM, OM, DM, SE]
-
-    # _class = [SUPER_ADMIN, ADMIN, GM, TM,
-    #           OM, BE, SUPERVISOR, SME,
-    #           TL, T2, SE, NH, VISITORS]
 
     def __init__(self):
         """Initializes the DB storage class"""
         self.__engine = create_engine("sqlite:///staffsync.db")
-
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
 
@@ -39,13 +35,21 @@ class DBStorage:
     def all(self, cls=None):
         """Returns object dictionary of the data in database"""
         all_dict = {}
-        if cls is None or cls is SE:
+        if cls is None:
+            # for class_type in self._class:
+            objs = self.__session.query(cls).all()
+            if objs:
+                for obj in objs:
+                    if obj and hasattr(obj, 'id'):
+                        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                        all_dict[key] = obj
+        else:
             objs = self.__session.query(cls).all()
             for obj in objs:
                 if obj and hasattr(obj, 'id'):
                     key = "{}.{}".format(obj.__class__.__name__, obj.id)
                     all_dict[key] = obj
-        return (all_dict)
+        return all_dict
 
     def new(self, obj):
         """Add the object to the current database session"""
@@ -71,57 +75,52 @@ class DBStorage:
         """Call remove() method on the private session attribute"""
         self.__session.close()
 
-    def get(self, cls, staff_id):
+    def get(self, cls, staff_id=None, **kwargs):
         """
-        Returns the object based on the class name and staff ID, or
-        None if not found
+        Returns the object based on the class name and matching
+        criteria in kwargs, or None if not found. If staff_id
+        is provided, it will be included in the filtering.
+        """
+        # if cls not in self._class:
+        #     return None
+
+        # # query = self.__session.query(cls)
+
+        # if staff_id is not None:
+        #     result = self.__session.query(cls).filter(cls.staff_id == staff_id)
+
+        # # if not kwargs and staff_id is None:
+        # #     return None
+
+        # # for key, value in kwargs.items():
+        # #     result = self.__session.query(cls).filter(getattr(cls, key) == value)
+
+        # return result.first()
+        if cls not in self._class:
+            return None
+
+        # ... (rest of the code)
+
+        if staff_id is not None and not kwargs:
+            result = self.__session.query(cls).filter_by(staff_id=staff_id).first()
+        elif kwargs:
+            query = self.__session.query(cls)
+            for key, value in kwargs.items():
+                query = query.filter(getattr(cls, key) == value)
+            result = query.all() # Returns a list
+        else:
+            return None  # Return None if no filtering criteria provided
+
+        return result
+
+    def get_all_with_reports_to(self, cls, reports_to):
+        """
+        Returns all objects of class `cls` where staff_id
+        is not None and reports_to is `reports_to`.
         """
         if cls not in self._class:
             return None
-        all_cls = models.storage.all(cls)
-        for value in all_cls.values():
-            if (value.staff_id == staff_id):
-                return value
-        return None
 
-    def get_manager(self, in_charge_of):
-        """
-        Returns the manager based on the 'in_charge_of' field
-        """
-        result = self.__session.query(self._class)\
-            .filter_by(in_charge_of=in_charge_of).first()
-        return result
-
-    def get_advocates(self, reports_to):
-        """
-        Returns the manager based on the 'in_charge_of' field
-        """
-        results = self.__session.query(self._class)\
-            .filter_by(reports_to=reports_to)
-        return results
-
-
-# Example usage
-if __name__ == "__main__":
-    models.storage = DBStorage()
-    models.storage.reload()
-    from models.employee import Employee
-
-    try:
-        emp = Employee(staff_id=3124, role="GM", first_name="John", last_name="Doe", in_charge_of=[1, 2, 3])
-        emp.set_name()
-        models.storage.new(emp)
-        models.storage.save()
-        print(f'Role: {emp.role}, Description: {emp.desc}, Access Level: {emp.access_level}, Name: {emp.name}, In Charge Of: {emp.in_charge_of_list}')
-    except ValueError as e:
-        print(e)
-
-    try:
-        adv = Employee(staff_id=3124, first_name="Jane", last_name="Smith", in_charge_of=[4, 5])
-        adv.set_manager(1)
-        adv.set_name()
-        models.storage.new(adv)
-        models.storage.save()
-        print(f'Role: {adv.role}, Description: {adv.desc}, Access Level: {adv.access_level}, Reports To: {adv.reports_to}, Name: {adv.name}, In Charge Of: {adv.in_charge_of_list}')
-    except ValueError as e:
-        print(e)
+        query = self.__session.query(cls).filter(cls.staff_id.isnot(None),
+                                                 cls.reports_to == reports_to)
+        return query.all()

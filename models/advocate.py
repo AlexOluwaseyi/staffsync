@@ -30,7 +30,7 @@ class SE(Employee, Base):
                 self.reports_to = manager.staff_id
             else:
                 self.reports_to = None  # Handle case where no manager is found
-        elif self.role =='NH':
+        elif self.role == 'NH':
             manager = models.storage.get_manager('NH')
             if manager:
                 self.reports_to = manager.staff_id

@@ -10,9 +10,11 @@ from models.permission import access_level, roles_description
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
 Base = declarative_base()
 
+
 class Employee:
+    domain = 'tek-experts.com'
     # __tablename__ = 'employees'
-    
+
     id = Column(String(60), primary_key=True, default=lambda: str(uuid4()))
     staff_id = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.now)
@@ -34,7 +36,8 @@ class Employee:
             setattr(self, key, value)
         self.id = kwargs.get('id', str(uuid4()))
         self.created_at = kwargs.get('created_at', datetime.now())
-        self.updated_at = kwargs.get('updated_at', datetime.now())
+        self.first_name = kwargs.get('first_name', None)
+        self.last_name = kwargs.get('last_name', None)
         self.staff_id = kwargs.get('staff_id')
         self.is_active = kwargs.get('is_active', True)
 
@@ -44,12 +47,20 @@ class Employee:
             role = kwargs.get('role', 'SE')
         if role not in access_level:
             raise ValueError(f"Invalid role: {role}")
+        if self.first_name is not None and self.last_name is not None:
+            self.name = " ".join([self.first_name, self.last_name])
+            email_id = '.'.join([self.first_name.lower(),
+                                 self.last_name.lower()])
+            self.email = f"{email_id}@{self.domain}"
         self.role = role
         self.desc = roles_description[role]
         self.access_level = access_level[role]
+        self.updated_at = kwargs.get('updated_at', datetime.now())
 
     def set_name(self):
-        self.name = f"{self.first_name} {self.last_name}"
+        if self.first_name is not None and self.last_name is not None:
+            self.name = " ".join([self.first_name, self.last_name])
+            self.updated_at = datetime.now()
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
