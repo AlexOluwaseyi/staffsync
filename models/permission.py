@@ -4,19 +4,19 @@ from enum import IntEnum
 
 
 class AccessLevel(IntEnum):
-    SUPER_ADMIN = 0
-    ADMIN = 1
-    GM = 2
-    OM = 3
-    BE = 3
-    TM = 4
-    DM = 4
+    SUPER_ADMIN = 12
+    ADMIN = 11
+    GM = 10
+    OM = 9
+    BE = 8
+    TM = 7
+    DM = 6
     SME = 5
-    TL = 6
-    T2 = 7
-    SE = 8
-    NH = 9
-    VISITORS = 10
+    TL = 4
+    T2 = 3
+    SE = 2
+    NH = 1
+    VISITORS = 0
 
 
 roles_description = {

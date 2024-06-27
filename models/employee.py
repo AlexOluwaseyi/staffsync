@@ -16,7 +16,7 @@ class Employee:
     # __tablename__ = 'employees'
 
     id = Column(String(60), primary_key=True, default=lambda: str(uuid4()))
-    staff_id = Column(Integer, nullable=True)
+    staff_id = Column(Integer, nullable=True, unique=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     first_name = Column(String(256), nullable=True)
@@ -71,10 +71,12 @@ class Employee:
         models.storage.save()
 
     def to_dict(self):
+        # for '_sa_instance'
         dict_copy = self.__dict__.copy()
         dict_copy['created_at'] = dict_copy['created_at'].strftime(time_format)
         dict_copy['updated_at'] = dict_copy['updated_at'].strftime(time_format)
         dict_copy['__class__'] = self.__class__.__name__
+        del dict_copy['_sa_instance_state']
         return dict_copy
 
     def roles_descr(self):

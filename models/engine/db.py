@@ -10,6 +10,7 @@ from models.manager import TM, OM, DM, GM
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 import models
+from sqlalchemy.exc import IntegrityError
 
 
 class DBStorage:
@@ -53,11 +54,20 @@ class DBStorage:
 
     def new(self, obj):
         """Add the object to the current database session"""
-        self.__session.add(obj)
+        try:
+            self.__session.add(obj)
+        except IntegrityError as e:
+            self.__session.rollback()
+            print(f"IntegrityError: {e._message}")
 
     def save(self):
         """Commit all changes of the current database session"""
-        self.__session.commit()
+        try:
+            self.__session.commit()
+        except IntegrityError:
+            self.__session.rollback()
+            print(f"IntegrityError: User with staff id already exist. \
+                  Unique constraint applied to staff_id.")
 
     def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
@@ -81,33 +91,19 @@ class DBStorage:
         criteria in kwargs, or None if not found. If staff_id
         is provided, it will be included in the filtering.
         """
-        # if cls not in self._class:
-        #     return None
-
-        # # query = self.__session.query(cls)
-
-        # if staff_id is not None:
-        #     result = self.__session.query(cls).filter(cls.staff_id == staff_id)
-
-        # # if not kwargs and staff_id is None:
-        # #     return None
-
-        # # for key, value in kwargs.items():
-        # #     result = self.__session.query(cls).filter(getattr(cls, key) == value)
-
-        # return result.first()
         if cls not in self._class:
             return None
 
         # ... (rest of the code)
 
         if staff_id is not None and not kwargs:
-            result = self.__session.query(cls).filter_by(staff_id=staff_id).first()
+            result = self.__session.query(cls).\
+                filter_by(staff_id=staff_id).first()
         elif kwargs:
             query = self.__session.query(cls)
             for key, value in kwargs.items():
                 query = query.filter(getattr(cls, key) == value)
-            result = query.all() # Returns a list
+            result = query.all()  # Returns a list
         else:
             return None  # Return None if no filtering criteria provided
 

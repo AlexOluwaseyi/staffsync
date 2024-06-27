@@ -2,6 +2,7 @@
 
 from models.base_model import Base
 from models.employee import Employee
+from models.manager import TM
 from models.permission import AccessLevel, Permission, access_level
 # from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer
@@ -22,22 +23,22 @@ class SE(Employee, Base):
         super().__init__(*args, **kwargs)
         ...
 
-    def set_manager(self, man_id):
+    def set_manager(self, manager_id):
         """Set the manager for SE"""
         if self.role == 'TL':
-            manager = models.storage.get_manager('TL')
+            manager = models.storage.get(TM, designation='TL')
             if manager:
                 self.reports_to = manager.staff_id
             else:
                 self.reports_to = None  # Handle case where no manager is found
         elif self.role == 'NH':
-            manager = models.storage.get_manager('NH')
+            manager = models.storage.get(TM, designation='NH')
             if manager:
                 self.reports_to = manager.staff_id
             else:
                 self.reports_to = None
         else:
-            manager = models.storage.get(TM, man_id)
+            manager = models.storage.get(TM, manager_id)
             if manager:
                 self.reports_to = manager.staff_id
             else:
@@ -61,7 +62,8 @@ class SE(Employee, Base):
         }
         if len(self.schedule) == 3 and sched_options['7'] not in self.schedule:
             current_schedule = sched_options['7']
-        elif len(self.schedule) >= 3 and sched_options['7'] not in self.schedule[-4:]:
+        elif (len(self.schedule) >= 3 and
+              sched_options['7'] not in self.schedule[-4:]):
             current_schedule = sched_options['7']
         else:
             current_schedule = random.choice(list(sched_options.values()))
@@ -69,14 +71,14 @@ class SE(Employee, Base):
         return current_schedule
 
 
-# class T2(BaseRole):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         role = kwargs.get('role', 'T2')
-#         if role not in access_level:
-#             raise ValueError(f"Invalid role: {role}")
-#         self.role = access_level[role].value
-#         ...
+class T2(Employee):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'T2')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
+        ...
 
 
 # class TL(BaseRole):
@@ -87,12 +89,3 @@ class SE(Employee, Base):
 #             raise ValueError(f"Invalid role: {role}")
 #         self.role = access_level[role].value
 #         ...
-
-
-if __name__ == "__main__":
-    from models.manager import TM
-    adv = TM(staff_id=3124)
-    print(f'is active - {adv.is_active}')
-    print(f'desc - {adv.desc}')
-    print(f'role - {adv.role}')
-    print(adv.access_level)

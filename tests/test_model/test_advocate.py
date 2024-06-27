@@ -41,10 +41,12 @@ class TestAdvocate(unittest.TestCase):
         self.assertEqual(self.adv.role, self.adv.__class__.__name__)
 
     def test_inheritance(self):
-        self.assertTrue(issubclass(SE, Employee), "SE should inherit from Employee")
+        self.assertTrue(issubclass(SE, Employee),
+                        "SE should inherit from Employee")
 
     def test_inheritance_2(self):
-        self.assertTrue(issubclass(SE, Employee), "SE should inherit from Employee")
+        self.assertTrue(issubclass(SE, Employee),
+                        "SE should inherit from Employee")
 
 
 class TestMultipleAdvocates(unittest.TestCase):
