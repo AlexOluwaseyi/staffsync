@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<main class="container">
+    <div class="sign-in modal-content rounded-4 shadow">
+        <div class="modal-header p-5 pb-4 border-bottom-0">
+            <h1 class="fw-bold mb-0 fs-2">Welcome</h1>
+        </div>
+        <p class="p2">Please sign in here</p>
+    
+        <div class="modal-body p-5 pt-0">
+            <form class="">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <label class="remember-me">
+                <input type="checkbox" id="remember-me">
+                Remember Me
+            </label>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign in</button>
+            </form>
+        </div>
+        </div>
+</main>
+
+{% endblock %}

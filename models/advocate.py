@@ -7,6 +7,8 @@ from models.permission import AccessLevel, Permission, access_level
 # from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer
 import models
+import calendar
+import json
 
 
 class SE(Employee, Base):
@@ -16,8 +18,12 @@ class SE(Employee, Base):
     __table_args__ = {'extend_existing': True}
 
     reports_to = Column(Integer, nullable=True)
+    schedules = Column(String(256))
 
-    schedule = []
+    # schedule = {'January': None, 'February': None, 'March': None,
+    #             'April': None, 'May': None, 'June': None, 'July': None,
+    #             'August': None, 'September': None, 'October': None,
+    #             'November': None, 'December': None}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,9 +54,22 @@ class SE(Employee, Base):
         """Get the manager for SE"""
         return self.reports_to
 
-    def generate_schedule(self):
-        """Generate a new schedule for SE"""
+    def generate_schedule(self, year, month):
+        """Generate a new schedule for SE for a given year and month"""
         import random
+
+        try:
+            schedules_dict = json.loads(self.schedules)
+        except (TypeError, json.JSONDecodeError):
+            schedules_dict = {}
+
+        if year not in schedules_dict:
+            schedules_dict[year] = {calendar.month_name[i].upper():
+                                    None for i in range(1, 13)}
+
+        if schedules_dict[year].get(month.upper()) is not None:
+            return f'Schedule for {month} {year} already exists'
+
         sched_options = {
             "1": "TWTFS",
             "2": "TWTFS",
@@ -60,15 +79,47 @@ class SE(Employee, Base):
             "6": "SSMTW",
             "7": "MTWTF"
         }
-        if len(self.schedule) == 3 and sched_options['7'] not in self.schedule:
-            current_schedule = sched_options['7']
-        elif (len(self.schedule) >= 3 and
-              sched_options['7'] not in self.schedule[-4:]):
-            current_schedule = sched_options['7']
+
+        # Retrieve recent schedules
+        # (convert None to empty string to avoid errors)
+        recent_schedules = [v for v in schedules_dict[year].values()
+                            if v is not None][-4:]
+
+        if (len(recent_schedules) == 3 and
+           sched_options['7'] not in recent_schedules):
+            schedules_dict[year][month.upper()] = sched_options['7']
+        elif (len(recent_schedules) >= 3 and
+              sched_options['7'] not in recent_schedules):
+            schedules_dict[year][month.upper()] = sched_options['7']
         else:
-            current_schedule = random.choice(list(sched_options.values()))
-        self.schedule.append(current_schedule)
-        return current_schedule
+            schedules_dict[year][month.upper()] = \
+             random.choice(list(sched_options.values()))
+
+        # Update self.schedules with the new schedule
+        self.schedules = json.dumps(schedules_dict)
+
+        return schedules_dict[year][month.upper()]
+
+    def get_schedule(self, year, month):
+        """Retrieve schedule for SE for a given year and month"""
+        try:
+            schedules_dict = json.loads(self.schedules)
+        except (TypeError, json.JSONDecodeError):
+            return 'Schedules data is invalid.'
+
+        year_str = str(year)
+        month_str = month.upper()
+
+        if year_str not in schedules_dict:
+            return f'Schedule for year {year} not available.'
+
+        if month_str not in schedules_dict[year_str]:
+            return f'Schedule for {month} not available.'
+
+        if schedules_dict[year_str][month_str] is None:
+            return f'Schedule for {month} {year} not available yet.'
+
+        return schedules_dict[year_str][month_str]
 
 
 class T2(Employee):

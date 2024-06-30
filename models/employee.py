@@ -6,12 +6,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, DateTime, Integer, Boolean
 import models
 from models.permission import access_level, roles_description
+from flask_login import UserMixin
+
 
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
 Base = declarative_base()
 
 
-class Employee:
+class Employee(UserMixin):
     domain = 'tek-experts.com'
     # __tablename__ = 'employees'
 
