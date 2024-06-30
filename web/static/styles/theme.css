@@ -4969,7 +4969,8 @@ section {
     background: #fff;
     padding: 20px 30px;
     position: relative;
-    min-height: 180px;
+    min-height: 200px;
+    max-height: 200px;
     overflow: hidden;
     margin-bottom: 40px;
 }
@@ -4981,7 +4982,7 @@ section {
 }
 
 .statistic__item h2 {
-    font-size: 36px;
+    font-size: 24px;
     font-weight: 300;
     color: #4272d7;
 }

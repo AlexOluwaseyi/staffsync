@@ -35,3 +35,7 @@ section{
     border-radius: 20px;
     /* box-shadow: ; */
 }
+
+#dynamic-text {
+    padding-bottom: 15px;
+}

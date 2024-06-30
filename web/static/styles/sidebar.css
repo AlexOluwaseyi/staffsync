@@ -143,3 +143,8 @@ main {
 .scrollarea {
     overflow-y: auto;
 }
+
+.dropdown {
+    display: flex;
+    justify-content: space-between;
+}

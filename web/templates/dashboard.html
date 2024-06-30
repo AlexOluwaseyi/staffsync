@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <!-- Sidebar -->
-<div class="side-bar d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
+<div class="side-bar d-flex flex-column flex-shrink-0 p-3" style="width: 280px;">
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="bootstrap" viewBox="0 0 118 94">
       <title>Bootstrap</title>
@@ -25,7 +25,7 @@
       <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"></path>
     </symbol>
   </svg>
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto  text-decoration-none">
       <!-- <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg> -->
       <span class="fs-4">Dashboard</span>
     </a>
@@ -38,25 +38,25 @@
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="#" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
           Dashboard
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="#" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
           Orders
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="#" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
           Products
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="#" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
           Customers
         </a>
@@ -64,17 +64,21 @@
     </ul>
     <hr>
     <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      <a href="#" class="d-flex align-items-center  text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
         <strong>mdo</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+      <ul id="dropdown-menu" class="dropdown-menu dropdown-menu-dark text-small shadow">
         <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li> -->
+        <li><a class="dropdown-item" href="#">Settings</a></li> -->
+        <li><a class="dropdown-item" href="#">Change Password</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{{ url_for('logout') }}")">Sign out</a></li>
       </ul>
+      <label class="theme-switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider round"></span>
+    </label>
     </div>
 </div>
 <!-- End Sidebar -->
@@ -97,10 +101,19 @@
   <section class="statistic statistic2">
   <div class="container">
       <div class="row">
+        <div class="col-md-6 col-lg-3">
+          <div class="statistic__item statistic__item--red">
+              <h2 id="dynamic-text" class="">Full name</h2>
+              <p class="desc">Employee full name here</p>
+              <div class="icon">
+                  <i class="zmdi zmdi-money"></i>
+              </div>
+          </div>
+      </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--green">
-                  <h2 class="">Manager</h2>
-                  <span class="desc">Manager name</span>
+                  <h2 id="dynamic-text" class="">Manager</h2>
+                  <p class="desc">Manager name</p>
                   <div class="icon">
                       <i class="zmdi zmdi-account-o"></i>
                   </div>
@@ -108,8 +121,8 @@
           </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--orange">
-                  <h2 class="">Staff ID</h2>
-                  <span class="desc">Staff ID here</span>
+                  <h2 id="dynamic-text" class="">Staff ID</h2>
+                  <p class="desc">Staff ID here</p>
                   <div class="icon">
                       <i class="zmdi zmdi-shopping-cart"></i>
                   </div>
@@ -117,8 +130,8 @@
           </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--blue">
-                  <h2 class="">E-mail</h2>
-                  <span class="desc">Staff email username here</span>
+                  <h2 id="dynamic-text" class="">E-mail</h2>
+                  <p class="desc">Staff email username here</p>
                   <div class="icon">
                       <i class="zmdi zmdi-calendar-note"></i>
                   </div>
@@ -126,8 +139,8 @@
           </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--red">
-                  <h2 class="number">Schedule History</h2>
-                  <span class="desc">Get schedule history for last 3 months</span>
+                  <h2 id="dynamic-text" class="">Schedule History</h2>
+                  <p class="desc">Get schedule history for last 3 months</p>
                   <div class="icon">
                       <i class="zmdi zmdi-money"></i>
                   </div>
@@ -135,23 +148,23 @@
           </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--green">
-                  <h2 class="">Update Password</h2>
-                  <span class="desc">Reset your account password.</span>
+                  <h2 id="dynamic-text" class="">Update Password</h2>
+                  <p class="desc">Reset your account password.</p>
                   <div class="icon">
                       <i class="zmdi zmdi-account-o"></i>
                   </div>
               </div>
           </div>
-          <!-- <div class="col-md-6 col-lg-3">
+          <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--orange">
-                  <h2 class="">Staff ID</h2>
-                  <span class="desc">Staff ID here</span>
+                  <h2 class="">Annual Leave</h2>
+                  <span class="desc">Total number of annual leave available</span>
                   <div class="icon">
                       <i class="zmdi zmdi-shopping-cart"></i>
                   </div>
               </div>
           </div>
-          <div class="col-md-6 col-lg-3">
+          <!-- <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--blue">
                   <h2 class="">E-mail</h2>
                   <span class="desc">Staff email username here</span>
