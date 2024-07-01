@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from models.base_model import Base
-from models.employee import Employee
+# from models.base_model import Base
+from models.employee import Employee, Base
 from models.manager import TM
 from models.permission import AccessLevel, Permission, access_level
 # from sqlalchemy.ext.declarative import declarative_base
@@ -140,3 +140,20 @@ class T2(Employee):
 #             raise ValueError(f"Invalid role: {role}")
 #         self.role = access_level[role].value
 #         ...
+
+
+if __name__ == '__main__':
+    # from models.advocate import SE
+    models.storage.reload()
+    print('reload success')
+    from models.manager import TM
+    lily = TM(staff_id=1234)
+    seyi = SE(staff_id=1235)
+    print('models instantiation success')
+    models.storage.reload()
+    print('model reload success again')
+    models.storage.new(lily)
+    models.storage.new(seyi)
+    print('new storage object success')
+    models.storage.save()
+    models.storage.reload()

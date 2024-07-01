@@ -14,22 +14,23 @@ Base = declarative_base()
 
 
 class Employee(UserMixin):
-    domain = 'tek-experts.com'
+    domain = 'phoenixhub.tech'
     # __tablename__ = 'employees'
 
-    id = Column(String(60), primary_key=True, default=lambda: str(uuid4()))
-    staff_id = Column(Integer, nullable=True, unique=True)
+    id = Column(String(60), default=lambda: str(uuid4()))
+    staff_id = Column(Integer, nullable=True, primary_key=True, unique=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     first_name = Column(String(256), nullable=True)
     last_name = Column(String(256), nullable=True)
-    is_active = Column(Boolean, default=True)
+    status = Column(Boolean, default=True)
     email = Column(String(256), nullable=True)
     password = Column(String(256), nullable=True)
     name = Column(String(256), nullable=True)
     role = Column(String(16), nullable=False)
     desc = Column(String(128), nullable=False)
     access_level = Column(Integer, nullable=False)
+    annual_leave = Column(Integer, default=10)
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -41,7 +42,7 @@ class Employee(UserMixin):
         self.first_name = kwargs.get('first_name', None)
         self.last_name = kwargs.get('last_name', None)
         self.staff_id = kwargs.get('staff_id')
-        self.is_active = kwargs.get('is_active', True)
+        self.statys = kwargs.get('status', True)
 
         if self.__class__.__name__ != "Employee":
             role = kwargs.get('role', self.__class__.__name__)
@@ -64,8 +65,18 @@ class Employee(UserMixin):
             self.name = " ".join([self.first_name, self.last_name])
             self.updated_at = datetime.now()
 
+    def set_status(self, new_status: Boolean):
+        self.status = new_status
+
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+
+    def get_id(self):
+        try:
+            return str(self.staff_id)
+        except AttributeError:
+            raise NotImplementedError("No `staff_id` attribute \
+                                      - override `get_id`") from None
 
     def save(self):
         self.updated_at = datetime.now()

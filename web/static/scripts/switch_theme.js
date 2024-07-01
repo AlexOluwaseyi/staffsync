@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const dropdown = document.getElementById('dropdown-menu');
     // const themeLabel = document.getElementById('theme-label');

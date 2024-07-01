@@ -3,7 +3,6 @@
 Contains the class DBStorage
 """
 
-# from models.base_model import Base, BaseModel
 from models.employee import Employee, Base
 from models.advocate import SE
 from models.manager import TM, OM, DM, GM
@@ -20,13 +19,19 @@ class DBStorage:
     __engine = None
     __session = None
     # _class = ['GM', 'TM', 'OM', 'DM', 'SE']
-    _class = [GM, TM, OM, DM, SE]
+    _class = [SE]
 
     def __init__(self):
         """Initializes the DB storage class"""
         self.__engine = create_engine("sqlite:///staffsync.db")
+        # Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
+
+    def get_tables(self):
+        from sqlalchemy import inspect
+        inspector = inspect(self.__engine)
+        print(inspector.get_table_names())
 
     @property
     def session(self):
@@ -35,15 +40,17 @@ class DBStorage:
 
     def all(self, cls=None):
         """Returns object dictionary of the data in database"""
+        from models.employee import Employee
         all_dict = {}
         if cls is None:
-            # for class_type in self._class:
-            objs = self.__session.query(cls).all()
-            if objs:
-                for obj in objs:
-                    if obj and hasattr(obj, 'id'):
-                        key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                        all_dict[key] = obj
+            for class_type in self._class:
+                objs = self.__session.query(class_type).all()
+                if objs:
+                    for obj in objs:
+                        if obj and hasattr(obj, 'id'):
+                            key = "{}.{}".format(obj.__class__.__name__,
+                                                 obj.id)
+                            all_dict[key] = obj
         else:
             objs = self.__session.query(cls).all()
             for obj in objs:
@@ -85,20 +92,33 @@ class DBStorage:
         """Call remove() method on the private session attribute"""
         self.__session.close()
 
-    def get(self, cls, staff_id=None, **kwargs):
+    def get(self, staff_id=None, cls=None, **kwargs):
         """
         Returns the object based on the class name and matching
         criteria in kwargs, or None if not found. If staff_id
         is provided, it will be included in the filtering.
         """
-        if cls not in self._class:
+        if cls is None:
+            for class_type in self._class:
+                query = self.__session.query(class_type)
+                if staff_id is not None:
+                    query = query.filter_by(staff_id=staff_id)
+                for key, value in kwargs.items():
+                    query = query.filter(getattr(class_type, key) == value)
+                result = query.first()
+                print(result)
+                if result:
+                    return result
+            return None
+
+        if cls is not None and cls not in self._class:
             return None
 
         # ... (rest of the code)
 
         if staff_id is not None and not kwargs:
-            result = self.__session.query(cls).\
-                filter_by(staff_id=staff_id).first()
+            result = self.__session.query(cls)\
+             .filter_by(staff_id=staff_id).first()
         elif kwargs:
             query = self.__session.query(cls)
             for key, value in kwargs.items():

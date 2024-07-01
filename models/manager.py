@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from models.employee import Employee
-from models.advocate import Base
+from models.employee import Employee, Base
+# from models.advocate import Base
 from sqlalchemy import Column, String, Integer
 import models
 

@@ -87,6 +87,9 @@ body.light-theme a {
 .dropdown-menu-light {
     --bs-dropdown-bg: #c3c3c3 !important;
 }
+.dropdown-menu-dark {
+    background-color: #343a40 !important;
+}
 
 /* body.light-theme * {
     background-color: rgb(248, 248, 248);

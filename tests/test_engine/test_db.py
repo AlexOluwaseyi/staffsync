@@ -21,6 +21,8 @@ class TestDBStorage(unittest.TestCase):
     def test_all_returns_dict(self):
         """Test that all returns a dictionary"""
         self.assertIs(type(models.storage.all()), dict)
+        users = models.storage.all()
+        print(all)
         # self.assertIs(type(models.storage.all(SE)), dict)
 
     def test_new_method(self):
@@ -88,6 +90,18 @@ class TestDBStorage(unittest.TestCase):
         models.storage.save()
         # print(f'staff_id - {staff_id}')
         get_se = self.storage.get(SE, staff_id)
+        # print(get_se.desc)
+        self.assertIsNotNone(get_se)
+        self.assertEqual(get_se.staff_id, staff_id)
+        self.assertEqual(get_se.first_name, None)
+
+    def test_get_without_cls(self):
+        """Test that get() retrieves the correct object without cls"""
+        new_se = SE(staff_id=staff_id)
+        models.storage.new(new_se)
+        models.storage.save()
+        # print(f'staff_id - {staff_id}')
+        get_se = self.storage.get(staff_id)
         # print(get_se.desc)
         self.assertIsNotNone(get_se)
         self.assertEqual(get_se.staff_id, staff_id)
