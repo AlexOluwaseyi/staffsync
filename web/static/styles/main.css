@@ -8,10 +8,12 @@
     width: 100%;
     height: 100svh;
     padding: 20px 30px;
+    overflow-y: auto;
 }
 
 section{
     display: flex;
+    overflow-y: hidden;
     /* margin: auto; */
 }
 

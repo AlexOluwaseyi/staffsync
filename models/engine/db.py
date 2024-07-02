@@ -19,7 +19,7 @@ class DBStorage:
     __engine = None
     __session = None
     # _class = ['GM', 'TM', 'OM', 'DM', 'SE']
-    _class = [SE]
+    _class = [TM, SE]
 
     def __init__(self):
         """Initializes the DB storage class"""
@@ -49,13 +49,14 @@ class DBStorage:
                     for obj in objs:
                         if obj and hasattr(obj, 'id'):
                             key = "{}.{}".format(obj.__class__.__name__,
-                                                 obj.id)
+                                                 obj.staff_id)
                             all_dict[key] = obj
         else:
             objs = self.__session.query(cls).all()
             for obj in objs:
                 if obj and hasattr(obj, 'id'):
-                    key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                    key = "{}.{}".format(obj.__class__.__name__,
+                                         obj.staff_id)
                     all_dict[key] = obj
         return all_dict
 

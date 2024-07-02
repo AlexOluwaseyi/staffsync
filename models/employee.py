@@ -7,14 +7,16 @@ from sqlalchemy import Column, String, DateTime, Integer, Boolean
 import models
 from models.permission import access_level, roles_description
 from flask_login import UserMixin
+from flask_bcrypt import Bcrypt
 
 
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
 Base = declarative_base()
+bcrypt = Bcrypt()
 
 
 class Employee(UserMixin):
-    domain = 'phoenixhub.tech'
+    domain = 'localhost'
     # __tablename__ = 'employees'
 
     id = Column(String(60), default=lambda: str(uuid4()))
@@ -42,7 +44,7 @@ class Employee(UserMixin):
         self.first_name = kwargs.get('first_name', None)
         self.last_name = kwargs.get('last_name', None)
         self.staff_id = kwargs.get('staff_id')
-        self.statys = kwargs.get('status', True)
+        self.status = kwargs.get('status', True)
 
         if self.__class__.__name__ != "Employee":
             role = kwargs.get('role', self.__class__.__name__)
@@ -60,6 +62,8 @@ class Employee(UserMixin):
         self.access_level = access_level[role]
         self.updated_at = kwargs.get('updated_at', datetime.now())
 
+        self.password = bcrypt.generate_password_hash('default')
+
     def set_name(self):
         if self.first_name is not None and self.last_name is not None:
             self.name = " ".join([self.first_name, self.last_name])
@@ -68,8 +72,11 @@ class Employee(UserMixin):
     def set_status(self, new_status: Boolean):
         self.status = new_status
 
+    def update_password(self, new_password):
+        self.password = bcrypt.generate_password_hash(new_password)
+
     def __str__(self):
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        return f"[{self.__class__.__name__}] ({self.staff_id}) {self.__dict__}"
 
     def get_id(self):
         try:
@@ -78,13 +85,17 @@ class Employee(UserMixin):
             raise NotImplementedError("No `staff_id` attribute \
                                       - override `get_id`") from None
 
+    def deactivate(self):
+        self.password = None
+        self.status = False
+        ...
+
     def save(self):
         self.updated_at = datetime.now()
         models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
-        # for '_sa_instance'
         dict_copy = self.__dict__.copy()
         dict_copy['created_at'] = dict_copy['created_at'].strftime(time_format)
         dict_copy['updated_at'] = dict_copy['updated_at'].strftime(time_format)

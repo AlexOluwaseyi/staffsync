@@ -51,26 +51,29 @@ def index():
 def login():
     title = "Login"
     msg = request.args.get('msg', '')
-    from models.advocate import SE
+    # from models.advocate import SE
 
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form['email'].lower()
         password_input = request.form['password']
         print(f'email - {email}')
         print(f'password - {password_input}')
         users = models.storage.all()
+        print(users)
         for user in users.values():
             if user and user.email == email:
                 password = user.password
-                # pw_check = bcrypt.check_password_hash(password,
-                #                                       password_input)
-                # if pw_check:
-                if password_input == password:
+                pw_check = bcrypt.check_password_hash(password,
+                                                      password_input)
+                # if password_input == password:
+                if pw_check:
                     print('pw check passed.')
                     user.authenticated = True
                     models.storage.session.add(user)
                     models.storage.session.commit()
                     login_user(user, remember=True)
+                    if user.access_level >= 6:
+                        return redirect(url_for('admin'))
                     return redirect(url_for('dashboard'))
                 else:
                     print('pw check failed')
@@ -88,6 +91,34 @@ def dashboard():
     title = "Dashboard"
     user = current_user
     return render_template('dashboard.html', title=title, user=current_user)
+
+
+@app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def admin():
+    title = "Admin"
+    user = current_user
+    return render_template('admin.html', title=title, user=current_user)
+
+
+@app.route('/resetpassword', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def resetpassword():
+    title = "Reset Password"
+    user = current_user
+    msg = ''
+    if request.method == 'POST':
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        pw_check = bcrypt.check_password_hash(user.password, old_password)
+        if pw_check:
+            user.update_password(new_password)
+            msg = 'Password changed successfully.'
+            logout_user()
+            return redirect(url_for('login', title='Login', msg=msg))
+        else:
+            msg = 'Old password is not correct.'
+    return render_template('resetpassword.html', title=title, msg=msg)
 
 
 @app.route('/logout', methods=['GET', 'POST'], strict_slashes=False)

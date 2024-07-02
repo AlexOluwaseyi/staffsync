@@ -148,3 +148,46 @@ main {
     display: flex;
     justify-content: space-between;
 }
+
+@media (max-width: 768px) {
+
+    .side-bar .nav-link span,
+    .side-bar .dropdown-toggle strong {
+        display: none;
+    }
+
+    .side-bar .nav-link {
+        justify-content: center;
+    }
+
+    .fs-4{
+        display: none;
+    }
+
+    .dropdown{
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
+
+    .side-bar .nav-link svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .side-bar .dropdown-toggle {
+        justify-content: center;
+    }
+
+    .side-bar {
+        width: 80px !important;
+    }
+
+    .side-bar .nav-pills .nav-link {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .side-bar .d-flex.align-items-center {
+        justify-content: center;
+    }
+}
