@@ -114,7 +114,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #333333;
+    /* color: #333333; */
     font-weight: 700;
     margin: 0;
     line-height: 1.2;
@@ -188,7 +188,7 @@ strong {
 .title-4 {
     font-weight: 500;
     font-size: 30px;
-    color: #393939;
+    /* color: #393939; */
 }
 
 .title-5 {

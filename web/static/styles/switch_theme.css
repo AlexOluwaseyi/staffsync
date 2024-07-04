@@ -67,8 +67,8 @@ input:checked + .slider:before {
 
 /* Dark theme */
 body.dark-theme > * {
-    background-color: black;
-    color: white;
+    background-color: #343a40;
+    color: white !important;
 }
 
 body.dark-theme a {
@@ -91,7 +91,7 @@ body.light-theme a {
     background-color: #343a40 !important;
 }
 
-/* body.light-theme * {
-    background-color: rgb(248, 248, 248);
+body.light-theme * {
+    /* background-color: rgb(248, 248, 248); */
     color: rgb(0, 0, 0) !important;
-} */
+}

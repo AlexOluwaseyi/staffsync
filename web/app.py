@@ -12,9 +12,12 @@ from flask_login import (LoginManager, current_user, login_user,
                          login_required, logout_user)
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 import json
+from uuid import uuid4
+from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -23,6 +26,8 @@ login_manager = LoginManager()
 login_manager.session_protection = "strong"
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=15)
+
 
 migrate = Migrate()
 bcrypt = Bcrypt()
@@ -54,51 +59,68 @@ def login():
     # from models.advocate import SE
 
     if request.method == 'POST':
+        # print(session['_flashes'])
+        # print(request.cookies.to_dict())
+        # print(dir(request))
         email = request.form['email'].lower()
         password_input = request.form['password']
-        print(f'email - {email}')
-        print(f'password - {password_input}')
-        users = models.storage.all()
-        print(users)
-        for user in users.values():
-            if user and user.email == email:
-                password = user.password
-                pw_check = bcrypt.check_password_hash(password,
-                                                      password_input)
-                # if password_input == password:
-                if pw_check:
-                    print('pw check passed.')
-                    user.authenticated = True
-                    models.storage.session.add(user)
-                    models.storage.session.commit()
-                    login_user(user, remember=True)
-                    if user.access_level >= 6:
-                        return redirect(url_for('admin'))
-                    return redirect(url_for('dashboard'))
-                else:
-                    print('pw check failed')
-                    msg = 'You have entered a wrong password.'
-
+        remember = 'remember-me' in request.form
+        print(f'rememeber is {remember}')
+        # print(f'email - {email}')
+        # print(f'password - {password_input}')
+        user = models.storage.get(email=email)
+        if user:
+            password = user.password
+            pw_check = bcrypt.check_password_hash(password,
+                                                  password_input)
+            if pw_check:
+                print('pw check passed.')
+                user.authenticated = True
+                models.storage.session.add(user)
+                models.storage.session.commit()
+                login_user(user, remember=remember)
+                # session_id = str(uuid4())
+                session_id = user.id
+                session['session_id'] = session_id
+                return redirect(url_for('admin', session_id=session_id))
             else:
-                msg = 'No user found with this email'
+                print('pw check failed')
+                msg = 'You have entered a wrong password.'
+
+        else:
+            msg = 'No user found with this email'
 
     return render_template('login.html', title=title, msg=msg)
 
 
+@app.route('/dashboard/<session_id>', methods=['GET', 'POST'],
+           strict_slashes=False)
 @app.route('/dashboard', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
-def dashboard():
+def dashboard(session_id=None):
     title = "Dashboard"
     user = current_user
     return render_template('dashboard.html', title=title, user=current_user)
 
 
+@app.route('/admin/<session_id>', methods=['GET', 'POST'], strict_slashes=False)
 @app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
-def admin():
+def admin(session_id=None):
     title = "Admin"
     user = current_user
     return render_template('admin.html', title=title, user=current_user)
+
+
+@app.route('/schedules/<session_id>', methods=['GET'], strict_slashes=False)
+@app.route('/schedules', methods=['GET'], strict_slashes=False)
+@login_required
+def schedules(session_id=None):
+    user = current_user
+    title =  "Schedules"
+    schedules = json.loads(user.schedules)
+    # for year, months in schedules
+    return render_template('schedules.html', title=title, user=user, schedules=schedules)
 
 
 @app.route('/resetpassword', methods=['GET', 'POST'], strict_slashes=False)

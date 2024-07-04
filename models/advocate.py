@@ -52,7 +52,9 @@ class SE(Employee, Base):
 
     def get_manager(self):
         """Get the manager for SE"""
-        return self.reports_to
+        manager_id = self.reports_to
+        manager = models.storage.get(manager_id)
+        return manager
 
     def generate_schedule(self, year, month):
         """Generate a new schedule for SE for a given year and month"""
@@ -63,11 +65,12 @@ class SE(Employee, Base):
         except (TypeError, json.JSONDecodeError):
             schedules_dict = {}
 
-        if year not in schedules_dict:
-            schedules_dict[year] = {calendar.month_name[i].upper():
-                                    None for i in range(1, 13)}
+        year_str = str(year)
+        if year_str not in schedules_dict:
+            schedules_dict[year_str] = {calendar.month_name[i].upper():
+                                        None for i in range(1, 13)}
 
-        if schedules_dict[year].get(month.upper()) is not None:
+        if schedules_dict[year_str].get(month.upper()) is not None:
             return f'Schedule for {month} {year} already exists'
 
         sched_options = {
@@ -82,23 +85,30 @@ class SE(Employee, Base):
 
         # Retrieve recent schedules
         # (convert None to empty string to avoid errors)
-        recent_schedules = [v for v in schedules_dict[year].values()
+        recent_schedules = [v for v in schedules_dict[year_str].values()
                             if v is not None][-4:]
 
         if (len(recent_schedules) == 3 and
            sched_options['7'] not in recent_schedules):
-            schedules_dict[year][month.upper()] = sched_options['7']
+            schedules_dict[year_str][month.upper()] = sched_options['7']
         elif (len(recent_schedules) >= 3 and
               sched_options['7'] not in recent_schedules):
-            schedules_dict[year][month.upper()] = sched_options['7']
+            schedules_dict[year_str][month.upper()] = sched_options['7']
         else:
-            schedules_dict[year][month.upper()] = \
+            schedules_dict[year_str][month.upper()] = \
              random.choice(list(sched_options.values()))
 
         # Update self.schedules with the new schedule
+        print(schedules_dict)
         self.schedules = json.dumps(schedules_dict)
+        try:
+            models.storage.session.add(self)
+            models.storage.session.commit()
+        except Exception as e:
+            models.storage.session.rollback()
+            raise e
 
-        return schedules_dict[year][month.upper()]
+        return schedules_dict[year_str][month.upper()]
 
     def get_schedule(self, year, month):
         """Retrieve schedule for SE for a given year and month"""
@@ -118,8 +128,8 @@ class SE(Employee, Base):
 
         if schedules_dict[year_str][month_str] is None:
             return f'Schedule for {month} {year} not available yet.'
-
-        return schedules_dict[year_str][month_str]
+        return f'Schedule for {month} {year} is\
+                {schedules_dict[year_str][month_str]}'
 
 
 class T2(Employee):

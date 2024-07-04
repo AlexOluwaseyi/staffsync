@@ -4,7 +4,7 @@
 }
 
 .dashboard-main{
-    background-color: #cccccc;
+    /* background-color: #cccccc; */
     width: 100%;
     height: 100svh;
     padding: 20px 30px;
@@ -75,4 +75,28 @@ section{
 
 .logo-logo{
     width: 50%;
+}
+
+.schedule_year{
+    padding: 10px;
+    background-color: #0000003b;
+    padding-left: 10px;
+}
+
+.month{
+    padding: 10px 20px;
+    border-bottom: 1px solid #00000030;
+}
+.month:nth-child(odd){
+    background-color: #adadad3b;
+}
+
+.schedule{
+    position: relative;
+    left: 50px;
+}
+
+.month_strong{
+    display: inline-grid;
+    width: 100px;
 }

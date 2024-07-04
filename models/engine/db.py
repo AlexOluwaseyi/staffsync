@@ -107,7 +107,6 @@ class DBStorage:
                 for key, value in kwargs.items():
                     query = query.filter(getattr(class_type, key) == value)
                 result = query.first()
-                print(result)
                 if result:
                     return result
             return None

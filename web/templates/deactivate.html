@@ -32,9 +32,21 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a href="#" class="nav-link" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
           <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link ">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+          <span>Orders</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link ">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          <span>Products</span>
         </a>
       </li>
       <li>
@@ -43,18 +55,6 @@
           <span>Profile</span>
         </a>
       </li>
-      <li>
-        <a href="{{ url_for('schedules') }}" class="nav-link ">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-          <span>Schedules</span>
-        </a>
-      </li><!--
-      <li>
-        <a href="#" class="nav-link ">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          <span>Products</span>
-        </a>
-      </li>-->
     </ul>
     <hr>
     <div class="dropdown">
@@ -131,45 +131,34 @@
           </div>
           <div class="col-md-6 col-lg-3">
               <div class="statistic__item statistic__item--red">
-                  <h2 id="dynamic-text" class="">My schedule</h2>
-                  <p class="desc">{{ user.get_schedule(2024, 'May') }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
                   <h2 id="dynamic-text" class="">Generate Schedule</h2>
-                  <p class="desc">Create schedule for month.</p>
-                  <a href="#"><p>{{ user.generate_schedule(2024, 'May') }}</p></a>
+                  <p class="desc">Create schedule for a selected month and year.</p>
                   <div class="icon">
                       <i class="zmdi zmdi-money"></i>
                   </div>
               </div>
           </div>
           <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--orange">
+              <div class="statistic__item statistic__item--green">
                   <h2 id="dynamic-text" class="">Reset a Password</h2>
                   <p class="desc">Reset a user account password.</p>
-                  <a href="#"><p>Click here to proceed</p></a>
+                  <p>Click here to proceed</p>
                   <div class="icon">
                       <i class="zmdi zmdi-account-o"></i>
                   </div>
               </div>
           </div>
           <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--blue">
+              <div class="statistic__item statistic__item--orange">
                   <h2 class="">Annual Leave</h2>
-                  <span class="desc">Annual leave available {{ user.annual_leave }}</span>
-                  <span class="desc">Annual leave used {{ 10 - user.annual_leave }}</span>
+                  <span class="desc">Total number of annual leave available</span>
                   <div class="icon">
                       <i class="zmdi zmdi-shopping-cart"></i>
                   </div>
               </div>
           </div>
           <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--red">
+              <div class="statistic__item statistic__item--blue">
                   <h2 class="">Create new record</h2>
                   <span class="desc">Add new record here</span>
                   <div class="icon">
@@ -178,7 +167,7 @@
               </div>
           </div>
           <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
+              <div class="statistic__item statistic__item--red">
                   <h2 class="number">Deactivate Account</h2>
                   <span class="desc">Deactivate an account here.</span>
                   <div class="icon">
