@@ -32,19 +32,19 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link" aria-current="page">
+        <a href="{{ url_for('index') }}" class="nav-link" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
           <span>Dashboard</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link ">
+        <a href="{{ url_for('profile') }}" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
           <span>Profile</span>
         </a>
       </li>
       <li>
-        <a href="{{ url_for('schedules') }}" class="nav-link active">
+        <a href="{{ url_for('schedules') }}" class="nav-link active" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
           <span>Schedules</span>
         </a>
@@ -71,18 +71,6 @@
 </div>
 <!-- End Sidebar -->
 <div class="dashboard-main">
-  <!-- WELCOME->
-  <section class="welcome p-t-10">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="title-4">Welcome back
-                    <span>{{ user.first_name }}!</span>
-                </h1>
-                <!-- <hr class="line-seprate"> ->
-            </div>
-        </div>
-  </section>
-  <!-- END WELCOME-->
   <!-- STATISTIC-->
   <section class="statistic statistic2">
     <div class="container">
@@ -93,7 +81,6 @@
           <h3 class="schedule_year">{{ year }}</h3>
           {% for month, schedule in months.items()|sort(reverse=False) if schedule  %}
           <div class="month">
-              <!-- <strong>{{ month.capitalize() }}:</strong> {{ schedule if schedule else 'No schedule' }} -->
               <strong class="month_strong">{{ month.capitalize()}}:</strong> <span class="schedule">{{ schedule }}</span>
           </div>
           {% endfor %}

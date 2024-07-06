@@ -10,5 +10,6 @@
         ".",
         "-p",
         "test_*.py"
-    ]
+    ],
+    "livePreview.defaultPreviewPath": "/web/templates/layout.html"
 }

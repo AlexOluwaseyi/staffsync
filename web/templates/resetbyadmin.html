@@ -1,53 +1,53 @@
 {% extends "layout.html" %}
 {% block content %}
-	
+	<link rel="stylesheet" href="../static/styles/dialog.css">
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('../static/images/bg-01.jpg');">
 			<div class="wrap-login100">
-				<form class="login100-form validate-form" method="POST">
+				<form id="reset-form" class="login100-form" method="POST" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').showModal(); document.getElementById('confirm-dialog').style.display = 'block';">
 					<span class="login100-form-logo">
 						<!-- <i class="zmdi zmdi-landscape"></i> -->
-						 <img src="../static/images/StaffSync-white@4x.png" alt="StaffSync Logo" width="64px" height="64px">
+						<img src="../static/images/StaffSync-white@4x.png" alt="StaffSync Logo" width="64px" height="64px">
 					</span>
 
 					<span class="login100-form-title p-b-34 p-t-27">
-						Log in
+						Reset a User Password
 					</span>
-
-					<div class="wrap-input100 " data-validate="Enter email">
-						<input id="username-input" class="input100" type="text" name="email" placeholder="E-mail">
+					<div class="wrap-input100 validate-input" data-validate="Enter email">
+						<select id="account_selector" class="input100" name="account_selector" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an option: </option>
+							<option value="staff_id">Staff ID</option>
+							<option value="email">E-mail</option>
+						</select>
+						<!-- <span class="focus-input100"></span> -->
+					</div>
+					
+					<div class="wrap-input100" id="email_input" data-validate="Enter email" style="display: none;">
+						<input id="email" class="input100" type="text" name="email" placeholder="E-mail">
 						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 
-					<div class="wrap-input100 validate-input" data-validate="Enter password">
-						<input id="password-input" class="input100" type="password" name="password" placeholder="Password">
-						<span class="focus-input100" data-placeholder="&#xf191;"></span>
-					</div>
-
-					<div class="contact100-form-checkbox">
-						<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
-						<label class="label-checkbox100" for="ckb1">
-							Remember me
-						</label>
+					<div class="wrap-input100" id="staff_input" data-validate="Enter Staff ID" style="display: none;">
+						<input id="staff_id" class="input100" type="text" name="staff_id" placeholder="Staff ID">
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 					<div><center>{{ msg }}</center></div>
-
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
-							Login
+						<button id="btnsubmit" type="submit" class="login100-form-btn">
+							Reset Password
 						</button>
 					</div>
-
-					<div class="text-center p-t-90">
-						<a class="txt1" href="{{ url_for('resetpassword') }}">
-							Forgot Password?
-						</a>
-					</div>
 				</form>
+				<dialog id="confirm-dialog" class="dialog-overlay" style="display: none;">
+					<p>Are you sure you want to proceed?</p>
+					<div class="dialog-buttons">
+						<button onclick="confirmSubmission()">Yes</button>
+						<button onclick="cancelOperation()">No</button>
+					</div>
+				</dialog>
 			</div>
 		</div>
 	</div>
-	
 
 	<div id="dropDownSelect1"></div>
 	
@@ -67,5 +67,6 @@
 	<script src="../static/vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
 	<script src="../static/scripts/main.js"></script>
+	<script src="../static/scripts/dialog.js"></script>
 
 {% endblock %}

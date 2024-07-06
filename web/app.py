@@ -33,8 +33,6 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 
 login_manager.init_app(app)
-# models.storage.init_app(app)
-# migrate.init_app(app, models.storage)
 bcrypt.init_app(app)
 
 
@@ -48,26 +46,27 @@ def user_loader(id):
 
 @app.route('/', strict_slashes=False)
 def index():
+    """Index page"""
     title = "Welcome"
+    print(session)
+    if '_id' in session:  # Check if the user is signed in
+        user = current_user
+        return redirect(url_for('dashboard', title="Dashboard"))
     return render_template('index.html', title=title)
 
 
 @app.route('/login', methods=['GET', 'POST'], strict_slashes=False)
 def login():
+    """Login page for users
+    """
     title = "Login"
     msg = request.args.get('msg', '')
-    # from models.advocate import SE
 
     if request.method == 'POST':
-        # print(session['_flashes'])
-        # print(request.cookies.to_dict())
-        # print(dir(request))
         email = request.form['email'].lower()
         password_input = request.form['password']
         remember = 'remember-me' in request.form
         print(f'rememeber is {remember}')
-        # print(f'email - {email}')
-        # print(f'password - {password_input}')
         user = models.storage.get(email=email)
         if user:
             password = user.password
@@ -79,7 +78,7 @@ def login():
                 models.storage.session.add(user)
                 models.storage.session.commit()
                 login_user(user, remember=remember)
-                # session_id = str(uuid4())
+                # session_id = session['_id']
                 session_id = user.id
                 session['session_id'] = session_id
                 return redirect(url_for('admin', session_id=session_id))
@@ -98,34 +97,64 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def dashboard(session_id=None):
+    """Loads dashboard for current
+    signed in user
+    """
     title = "Dashboard"
     user = current_user
+    if user.access_level >= 5:
+        title = "Admin Dashboard"
     return render_template('dashboard.html', title=title, user=current_user)
 
 
-@app.route('/admin/<session_id>', methods=['GET', 'POST'], strict_slashes=False)
+@app.route('/admin/<session_id>', methods=['GET', 'POST'],
+           strict_slashes=False)
 @app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def admin(session_id=None):
+    """Loads dashboard for current
+    signed in user
+    """
     title = "Admin"
     user = current_user
     return render_template('admin.html', title=title, user=current_user)
+
+
+@app.route('/profile/<session_id>', methods=['GET', 'POST'],
+           strict_slashes=False)
+@app.route('/profile', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def profile(session_id=None):
+    """ Profile page for current
+    signed in user.
+    """
+    title = "Profile"
+    user = current_user
+    return render_template('profile.html', title=title, user=current_user)
 
 
 @app.route('/schedules/<session_id>', methods=['GET'], strict_slashes=False)
 @app.route('/schedules', methods=['GET'], strict_slashes=False)
 @login_required
 def schedules(session_id=None):
+    """Loads the current and previous schedules
+    for employees.
+    Loads the schedule (json) from database.
+    """
     user = current_user
-    title =  "Schedules"
+    title = "Schedules"
     schedules = json.loads(user.schedules)
-    # for year, months in schedules
-    return render_template('schedules.html', title=title, user=user, schedules=schedules)
+    return render_template('schedules.html', title=title,
+                           user=user, schedules=schedules)
 
 
 @app.route('/resetpassword', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def resetpassword():
+    """Resets user password for the signed
+    user and logs out user to login with new
+    password
+    """
     title = "Reset Password"
     user = current_user
     msg = ''
@@ -143,8 +172,43 @@ def resetpassword():
     return render_template('resetpassword.html', title=title, msg=msg)
 
 
+@app.route('/resetbyadmin', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def resetbyadmin():
+    """ Resets employee account password to
+    default based on E-mail or Staff ID of
+    the employee with forgotten password.
+    """
+    user = current_user
+    if user.access_level != 4:
+        abort(403)
+    title = 'Reset by Admin'
+    msg = ''
+    referrer = request.referrer
+    if request.method == 'POST':
+        if 'staff_id' in request.form:
+            staff_id = request.form['staff_id']
+            user = models.storage.get(staff_id=staff_id)
+        elif 'email' in request.form:
+            email = request.form['email']
+            user = models.storage.get(email=email)
+        if user:
+            user.reset_password()
+            msg = f'Password reset for {user.name} successful.'
+            from time import sleep
+            sleep(5)
+            return redirect(referrer or url_for('admin'))
+        else:
+            msg = f'No user found with E-mail or Staff ID provided.'
+    return render_template('resetbyadmin.html', title=title, msg=msg)
+
+
 @app.route('/logout', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
 def logout():
+    """Log out current user
+    and delete session.
+    """
     title = "Login"
     user = current_user
     user.authenticated = False
@@ -152,7 +216,8 @@ def logout():
     models.storage.session.commit()
     logout_user()
     msg = 'You have been logged out successfully.'
-    return redirect(url_for('login', title=title, msg=msg))
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

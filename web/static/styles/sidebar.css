@@ -24,7 +24,7 @@
 .b-example-vr {
     flex-shrink: 0;
     width: 1.5rem;
-    height: 100vh;
+    height: 100svh;
 }
 
 .bi {
@@ -76,7 +76,7 @@
 }
 
 body {
-    min-height: 100vh;
+    min-height: 100svh;
     min-height: -webkit-fill-available;
 }
 
@@ -85,9 +85,9 @@ html {
 }
 
 main {
-    height: 100vh;
+    height: 100svh;
     height: -webkit-fill-available;
-    max-height: 100vh;
+    max-height: 100svh;
     overflow-x: auto;
     overflow-y: hidden;
 }

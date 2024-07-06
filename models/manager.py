@@ -3,6 +3,7 @@ from models.employee import Employee, Base
 # from models.advocate import Base
 from sqlalchemy import Column, String, Integer
 import models
+import json
 
 
 class TM(Employee, Base):

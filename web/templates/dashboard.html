@@ -32,13 +32,13 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a href="{{ url_for('index') }}" class="nav-link active" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
           <span>Dashboard</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link ">
+        <a href="{{ url_for('profile') }}" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
           <span>Profile</span>
         </a>
@@ -59,7 +59,7 @@
       <ul id="dropdown-menu" class="dropdown-menu dropdown-menu-dark text-small shadow">
         <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
         <li><a class="dropdown-item" href="#">Settings</a></li> -->
-        <li><a class="dropdown-item" href="#">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('resetpassword') }}">Change Password</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{{ url_for('logout') }}")">Sign out</a></li>
       </ul>

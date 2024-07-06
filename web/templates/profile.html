@@ -32,19 +32,19 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="{{ url_for('index') }}" class="nav-link active" aria-current="page">
+        <a href="{{ url_for('index') }}" class="nav-link" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
           <span>Dashboard</span>
         </a>
       </li>
       <li>
-        <a href="{{ url_for('profile') }}" class="nav-link ">
+        <a href="{{ url_for('profile') }}" class="nav-link active" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
           <span>Profile</span>
         </a>
       </li>
       <li>
-        <a href="{{ url_for('schedules') }}" class="nav-link ">
+        <a href="{{ url_for('schedules') }}" class="nav-link">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
           <span>Schedules</span>
         </a>
@@ -71,118 +71,46 @@
 </div>
 <!-- End Sidebar -->
 <div class="dashboard-main">
-  <!-- WELCOME-->
+  <!-- WELCOME->
   <section class="welcome p-t-10">
         <div class="row">
             <div class="col-md-12">
                 <h1 class="title-4">Welcome back
                     <span>{{ user.first_name }}!</span>
                 </h1>
-                <!-- <hr class="line-seprate"> -->
+                <!-- <hr class="line-seprate"> ->
             </div>
         </div>
   </section>
   <!-- END WELCOME-->
-  <!-- STATISTIC-->
+  <!-- PROFILE-->
   <section class="statistic statistic2">
-  <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-lg-3">
-          <div class="statistic__item statistic__item--red">
-              <h2 id="dynamic-text" class="">Full name</h2>
-              <p class="desc">{{ user.name }}</p>
-              <div class="icon">
-                  <i class="zmdi zmdi-money"></i>
-              </div>
+    <div class="container">
+    <h2>Profile</h2>
+
+      <div class="year">
+          <h3 class="basic_data">Basic Data</h3>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">First Name:</strong> <span class="schedule">{{ user.first_name }}</span>
+          </div>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">Last Name:</strong> <span class="schedule">{{ user.last_name }}</span>
+          </div>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">E-mail:</strong> <span class="schedule">{{ user.email }}</span>
+          </div>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">Role:</strong> <span class="schedule">{{ user.role }}</span>
+          </div>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">Role Description:</strong> <span class="schedule">{{ user.desc }}</span>
+          </div>
+          <div class="basic_data_item">
+              <strong class="basic_data_value">Manager:</strong> <span class="schedule">{{ user.reports_to }}</span>
           </div>
       </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 id="dynamic-text" class="">Manager</h2>
-                  <p class="desc">{{ user.get_manager().name | default('None') }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-account-o"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--orange">
-                  <h2 id="dynamic-text" class="">Staff ID</h2>
-                  <p class="desc">{{ user.staff_id }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-shopping-cart"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--blue">
-                  <h2 id="dynamic-text" class="">E-mail</h2>
-                  <p class="desc">{{ user.email }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--red">
-                  <h2 id="dynamic-text" class="">My schedule</h2>
-                  <p class="desc">{{ user.get_schedule(2024, 'May') }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 id="dynamic-text" class="">Generate Schedule</h2>
-                  <p class="desc">Create schedule for month.</p>
-                  <a href="#"><p>{{ user.generate_schedule(2024, 'May') }}</p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-money"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--orange">
-                  <h2 id="dynamic-text" class="">Reset a Password</h2>
-                  <p class="desc">Reset a user account password.</p>
-                  <a href="{{ url_for('resetbyadmin') }}"><p>Click here to proceed</p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-account-o"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--blue">
-                  <h2 class="">Annual Leave</h2>
-                  <span class="desc">Annual leave available {{ user.annual_leave }}</span>
-                  <span class="desc">Annual leave used {{ 10 - user.annual_leave }}</span>
-                  <div class="icon">
-                      <i class="zmdi zmdi-shopping-cart"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--red">
-                  <h2 class="">Create new record</h2>
-                  <span class="desc">Add new record here</span>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 class="number">Deactivate Account</h2>
-                  <span class="desc">Deactivate an account here.</span>
-                  <div class="icon">
-                      <i class="zmdi zmdi-money"></i>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+    </div>
   </section>
-  <!-- END STATISTIC-->
+  <!-- END PROFILE-->
 </div>
 {%endblock%}

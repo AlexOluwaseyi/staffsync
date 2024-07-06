@@ -74,6 +74,11 @@ class Employee(UserMixin):
 
     def update_password(self, new_password):
         self.password = bcrypt.generate_password_hash(new_password)
+        models.storage.save()
+
+    def reset_password(self):
+        self.password = bcrypt.generate_password_hash('default')
+        models.storage.save()
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.staff_id}) {self.__dict__}"
@@ -105,3 +110,9 @@ class Employee(UserMixin):
 
     def roles_descr(self):
         return roles_description[self.role]
+
+    def get_manager(self):
+        """Get the manager for SE"""
+        manager_id = self.reports_to
+        manager = models.storage.get(manager_id)
+        return manager

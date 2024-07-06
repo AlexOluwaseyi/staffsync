@@ -82,12 +82,24 @@ section{
     background-color: #0000003b;
     padding-left: 10px;
 }
+.basic_data{
+    padding: 10px;
+    background-color: #0000003b;
+    padding-left: 10px;
+}
 
 .month{
     padding: 10px 20px;
     border-bottom: 1px solid #00000030;
 }
+.basic_data_item{
+    padding: 10px 20px;
+    border-bottom: 1px solid #00000030;
+}
 .month:nth-child(odd){
+    background-color: #adadad3b;
+}
+.basic_data_item:nth-child(odd){
     background-color: #adadad3b;
 }
 
@@ -97,6 +109,10 @@ section{
 }
 
 .month_strong{
+    display: inline-grid;
+    width: 100px;
+}
+.basic_data_value{
     display: inline-grid;
     width: 100px;
 }
