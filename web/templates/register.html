@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block content %}
+	<link rel="stylesheet" href="../static/styles/dialog.css">
+	<div class="limiter">
+		<div class="container-login100" style="background-image: url('../static/images/bg-01.jpg');">
+			<div class="wrap-login100">
+				<form id="reset-form" class="login100-form" method="POST" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').showModal(); document.getElementById('confirm-dialog').style.display = 'block';">
+					<span class="login100-form-logo">
+						<!-- <i class="zmdi zmdi-landscape"></i> -->
+						<img src="../static/images/StaffSync-white@4x.png" alt="StaffSync Logo" width="64px" height="64px">
+					</span>
+
+					<span class="login100-form-title p-b-34 p-t-27">
+						Add Employee Record
+					</span>
+					<div class="wrap-input100 validate-input" data-validate="Enter email">
+						<select id="option_selector" class="input100" name="option_selector" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an option: </option>
+							<option value="new_entry">Add a new Employee</option>
+							<option value="existing">Add an existing employee</option>
+						</select>
+					</div>
+
+					<div class="wrap-input100" id="new_entry" data-validate="Enter email" style="display: none;">
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="first_name" placeholder="First Name">
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div>
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="last_name" placeholder="Last Name">
+							<span class="focus-input100" data-placeholder="&#xf207;"></span></div>
+						<!-- <div class="wrap-input100">
+							<input class="input100" type="text" name="email" placeholder="E-mail">
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div> -->
+						<div class="wrap-input100">
+							<select class="input100" name="role" disabled>
+								<option value="" disabled>Role</option>
+								{% for item in access_level.keys() %}
+								<option value="{{ item }}" {% if item == 'NH' %}selected{% endif %}>Role: {{ item }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div>
+						<div class="wrap-input100">
+							<select class="input100" name="role" disabled>
+								<option value="" disabled>Schedule</option>
+								{% for item in sched_options.values() %}
+								<option value="{{ item }}" {% if item == 'MTWTF' %}selected{% endif %}>Schedule: {{ item }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div>
+						<!-- <div class="wrap-input100">
+							<select class="input100" name="role">
+								<option value="" disabled selected>Role</option>
+								{% for item in access_level.keys() %}
+								<option value="{{ item }}">{{ item }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div> -->
+					</div>
+
+					<div class="wrap-input100" id="existing" data-validate="Enter Staff ID" style="display: none;">
+						<input id="staff_id" class="input100" type="text" name="staff_id" placeholder="Staff ID">
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<div><center>{{ msg }}</center></div>
+					<div class="container-login100-form-btn">
+						<button id="btnsubmit" type="submit" class="login100-form-btn">
+							Add Employee
+						</button>
+					</div>
+				</form>
+				<dialog id="confirm-dialog" class="dialog-overlay" style="display: none;">
+					<p>Are you sure you want to proceed?</p>
+					<div class="dialog-buttons">
+						<button onclick="confirmSubmission()">Yes</button>
+						<button onclick="cancelOperation()">No</button>
+					</div>
+				</dialog>
+			</div>
+		</div>
+	</div>
+
+	<div id="dropDownSelect1"></div>
+	
+<!--===============================================================================================-->
+	<script src="../static/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/vendor/bootstrap/js/popper.js"></script>
+	<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/vendor/daterangepicker/moment.min.js"></script>
+	<script src="../static/vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+	<script src="../static/scripts/main.js"></script>
+	<script src="../static/scripts/register.js"></script>
+
+{% endblock %}

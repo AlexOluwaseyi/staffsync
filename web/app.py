@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
 import models
-from flask_cors import CORS
-from flasgger import Swagger
-from flasgger.utils import swag_from
 from web.creds import secretKey
 from flask import (Flask, flash, render_template, session,
                    redirect, url_for, request, abort, make_response,
@@ -16,7 +13,6 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 import json
-from uuid import uuid4
 from datetime import timedelta
 
 
@@ -107,6 +103,37 @@ def dashboard(session_id=None):
     return render_template('dashboard.html', title=title, user=current_user)
 
 
+@app.route('/register', methods=['GET', 'POST'], strict_slashes=False)
+# @login_required
+def register(session_id=None):
+    """Loads dashboard for current
+    signed in user
+    """
+    from models.permission import access_level, sched_options
+    from models.roles import roles_dict
+
+    title = "Register"
+    user = current_user
+    # access_level = access_level
+    # if user.access_level <= 10:
+    #     abort(403)
+    print(request.form)
+    if request.method == 'POST':
+        option_selector = request.form.get('option_selector')
+        if option_selector == 'new_entry':
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            role = roles_dict.get('NH')
+            entry = role(first_name=first_name, last_name=last_name)
+            entry.save()
+        elif option_selector == 'existing':
+            print("Existing")
+        print("something is wrong")
+    return render_template('register.html', title=title, user=current_user,
+                           access_level=access_level,
+                           sched_options=sched_options)
+
+
 @app.route('/admin/<session_id>', methods=['GET', 'POST'],
            strict_slashes=False)
 @app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
@@ -180,7 +207,7 @@ def resetbyadmin():
     the employee with forgotten password.
     """
     user = current_user
-    if user.access_level != 4:
+    if user.access_level <= 5:
         abort(403)
     title = 'Reset by Admin'
     msg = ''
@@ -196,7 +223,7 @@ def resetbyadmin():
             user.reset_password()
             msg = f'Password reset for {user.name} successful.'
             from time import sleep
-            sleep(5)
+            sleep(3)
             return redirect(referrer or url_for('admin'))
         else:
             msg = f'No user found with E-mail or Staff ID provided.'

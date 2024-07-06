@@ -132,7 +132,13 @@ class SE(Employee, Base):
                 {schedules_dict[year_str][month_str]}'
 
 
-class T2(Employee):
+class T2(Employee, Base):
+    __tablename__ = 'advocates'
+    __table_args__ = {'extend_existing': True}
+
+    reports_to = Column(Integer, nullable=True)
+    schedules = Column(String(256))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         role = kwargs.get('role', 'T2')
@@ -142,28 +148,17 @@ class T2(Employee):
         ...
 
 
-# class TL(BaseRole):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         role = kwargs.get('role', 'TL')
-#         if role not in access_level:
-#             raise ValueError(f"Invalid role: {role}")
-#         self.role = access_level[role].value
-#         ...
+class TL(Employee, Base):
+    __tablename__ = 'advocates'
+    __table_args__ = {'extend_existing': True}
 
+    reports_to = Column(Integer, nullable=True)
+    schedules = Column(String(256))
 
-if __name__ == '__main__':
-    # from models.advocate import SE
-    models.storage.reload()
-    print('reload success')
-    from models.manager import TM
-    lily = TM(staff_id=1234)
-    seyi = SE(staff_id=1235)
-    print('models instantiation success')
-    models.storage.reload()
-    print('model reload success again')
-    models.storage.new(lily)
-    models.storage.new(seyi)
-    print('new storage object success')
-    models.storage.save()
-    models.storage.reload()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'TL')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
+        ...

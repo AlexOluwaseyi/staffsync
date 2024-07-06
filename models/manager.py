@@ -38,7 +38,7 @@ class TM(Employee, Base):
         self.in_charge_of = list(advocates.keys())
 
 
-class OM(Employee):
+class OM(Employee, Base):
     """Class definition for Operations Manager"""
     __tablename__ = "managers"
     __table_args__ = {'extend_existing': True}
@@ -50,7 +50,7 @@ class OM(Employee):
         super().__init__(*args, **kwargs)
 
 
-class GM(Employee):
+class GM(Employee, Base):
     """Class definition for Global Manager"""
     __tablename__ = "managers"
     __table_args__ = {'extend_existing': True}
@@ -62,7 +62,7 @@ class GM(Employee):
         super().__init__(*args, **kwargs)
 
 
-class DM(Employee):
+class DM(Employee, Base):
     """Class definition for Duty Manager"""
     __tablename__ = "managers"
     __table_args__ = {'extend_existing': True}

@@ -33,18 +33,6 @@ roles_description = {
     'NH': "New Hires",
     'VIS': "Visitors"
 }
-# roles_description = {
-#     1: "Super Admin",
-#     2: "Management",
-#     3: "Manager",
-#     4: "Operations Manager",
-#     5: "Subject Matter Experts",
-#     6: "Technical Lead",
-#     7: "Tier 2 Support Advocate",
-#     8: "Tenured Advocate",
-#     9: "New Hires",
-#     10: "Visitors"
-# }
 
 
 # Create a dictionary to map roles to access levels
@@ -74,3 +62,14 @@ class Permission:
     CONFIGURE_SYSTEM = AccessLevel.SUPER_ADMIN
     """
     pass
+
+
+sched_options = {
+            "1": "TWTFS",
+            "2": "TWTFS",
+            "3": "WTFSS",
+            "4": "TFSSM",
+            "5": "FSSMT",
+            "6": "SSMTW",
+            "7": "MTWTF"
+        }

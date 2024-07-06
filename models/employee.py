@@ -20,7 +20,7 @@ class Employee(UserMixin):
     # __tablename__ = 'employees'
 
     id = Column(String(60), default=lambda: str(uuid4()))
-    staff_id = Column(Integer, nullable=True, primary_key=True, unique=True)
+    staff_id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     first_name = Column(String(256), nullable=True)
@@ -75,10 +75,12 @@ class Employee(UserMixin):
     def update_password(self, new_password):
         self.password = bcrypt.generate_password_hash(new_password)
         models.storage.save()
+        self.updated_at = datetime.now()
 
     def reset_password(self):
         self.password = bcrypt.generate_password_hash('default')
         models.storage.save()
+        self.updated_at = datetime.now()
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.staff_id}) {self.__dict__}"
@@ -93,7 +95,7 @@ class Employee(UserMixin):
     def deactivate(self):
         self.password = None
         self.status = False
-        ...
+        self.updated_at = datetime.now()
 
     def save(self):
         self.updated_at = datetime.now()
