@@ -8,7 +8,7 @@ from sqlalchemy import Column, String, DateTime, Integer
 
 class BE(Employee, Base):
     """Class definition for Business Enablement"""
-    __tablename__ = "managers"
+    __tablename__ = "biz_enable"
     __table_args__ = {'extend_existing': True}
     reports_to = Column(Integer, nullable=True)
     in_charge_of = Column(String(1024), nullable=True)

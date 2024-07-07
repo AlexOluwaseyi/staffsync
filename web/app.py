@@ -106,32 +106,62 @@ def dashboard(session_id=None):
 @app.route('/register', methods=['GET', 'POST'], strict_slashes=False)
 # @login_required
 def register(session_id=None):
-    """Loads dashboard for current
-    signed in user
+    """Add a new or existing employee record
     """
     from models.permission import access_level, sched_options
     from models.roles import roles_dict
+    from datetime import datetime
+    import calendar
 
     title = "Register"
     user = current_user
     # access_level = access_level
     # if user.access_level <= 10:
     #     abort(403)
-    print(request.form)
+    month_int = datetime.now().month
+    current_month = calendar.month_name[month_int]
+    current_year = datetime.now().year
+    all_managers = {}
+    from models.manager import TM, DM, OM, GM
+    _class = [TM, DM, OM, GM]
+    # for cls in _class:
+    all = models.storage.all()
+    managers = ([obj for obj in all.values() if obj.access_level > 5
+                 and obj.access_level < 12])
+
     if request.method == 'POST':
         option_selector = request.form.get('option_selector')
         if option_selector == 'new_entry':
             first_name = request.form.get('first_name')
             last_name = request.form.get('last_name')
-            role = roles_dict.get('NH')
-            entry = role(first_name=first_name, last_name=last_name)
+            role = 'NH'
+            model = roles_dict.get(role)
+            manager = models.storage.get(designation='NH')
+            reports_to = manager.staff_id
+            entry = model(first_name=first_name, last_name=last_name,
+                         reports_to=reports_to, role=role)
+            entry.override_schedule(current_year, current_month, 'MTWTF')
             entry.save()
+
         elif option_selector == 'existing':
-            print("Existing")
-        print("something is wrong")
+            first_name = request.form.get('first_name2')
+            last_name = request.form.get('last_name2')
+            print(f'{first_name} - {last_name}')
+            staff_id = request.form.get('staff_id')
+            email = request.form.get('email')
+            role = request.form.get('role')
+            manager_id = request.form.get('manager')
+            manager = models.storage.get(manager_id)
+            reports_to=manager.staff_id
+            model = roles_dict.get(role)
+            entry = model(first_name=first_name, last_name=last_name,
+                          staff_id=staff_id, email=email,
+                          reports_to=reports_to, role=role)
+            entry.generate_schedule(current_year, current_month)
+            # entry.save
     return render_template('register.html', title=title, user=current_user,
-                           access_level=access_level,
-                           sched_options=sched_options)
+                           access_level=access_level, roles_dict=roles_dict,
+                           sched_options=sched_options, managers=managers)
 
 
 @app.route('/admin/<session_id>', methods=['GET', 'POST'],
@@ -245,6 +275,19 @@ def logout():
     msg = 'You have been logged out successfully.'
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('login'))
+
+
+def clean(text):
+    # Remove leading and trailing whitespace, tabs, and newlines
+    text = text.strip()
+
+    # Replace tabs and newlines within the string
+    text = text.replace('\t', '').replace('\n', '').replace('\r', '')
+
+    # Remove all spaces within the string
+    text = text.replace(' ', '')
+
+    return text
 
 
 if __name__ == '__main__':

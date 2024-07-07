@@ -8,6 +8,7 @@ import models
 from models.permission import access_level, roles_description
 from flask_login import UserMixin
 from flask_bcrypt import Bcrypt
+import random
 
 
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
@@ -41,8 +42,8 @@ class Employee(UserMixin):
             setattr(self, key, value)
         self.id = kwargs.get('id', str(uuid4()))
         self.created_at = kwargs.get('created_at', datetime.now())
-        self.first_name = kwargs.get('first_name', None)
-        self.last_name = kwargs.get('last_name', None)
+        self.first_name = kwargs.get('first_name', None).strip().title()
+        self.last_name = kwargs.get('last_name', None).strip().title()
         self.staff_id = kwargs.get('staff_id')
         self.status = kwargs.get('status', True)
 
@@ -52,16 +53,21 @@ class Employee(UserMixin):
             role = kwargs.get('role', 'SE')
         if role not in access_level:
             raise ValueError(f"Invalid role: {role}")
-        if self.first_name is not None and self.last_name is not None:
-            self.name = " ".join([self.first_name, self.last_name])
-            email_id = '.'.join([self.first_name.lower(),
-                                 self.last_name.lower()])
-            self.email = f"{email_id}@{self.domain}"
+        if 'email' not in kwargs:
+            if self.first_name and self.last_name:
+                self.name = " ".join([self.first_name, self.last_name])
+                email = (f"{self.first_name.lower()}."
+                        f"{self.last_name.lower()}@{self.domain}")
+                while models.storage.get(email=email) is not None:
+                    random_digit = str(random.randint(0, 9))
+                    email = (f"{self.first_name.lower()}.{self.last_name.lower()}"
+                            f"{random_digit}@{self.domain}")
+                self.email = email
         self.role = role
         self.desc = roles_description[role]
         self.access_level = access_level[role]
         self.updated_at = kwargs.get('updated_at', datetime.now())
-
+        self.set_name()
         self.password = bcrypt.generate_password_hash('default')
 
     def set_name(self):
@@ -108,6 +114,7 @@ class Employee(UserMixin):
         dict_copy['updated_at'] = dict_copy['updated_at'].strftime(time_format)
         dict_copy['__class__'] = self.__class__.__name__
         del dict_copy['_sa_instance_state']
+        del dict_copy['password']
         return dict_copy
 
     def roles_descr(self):

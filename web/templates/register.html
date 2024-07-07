@@ -28,11 +28,8 @@
 						</div>
 						<div class="wrap-input100">
 							<input class="input100" type="text" name="last_name" placeholder="Last Name">
-							<span class="focus-input100" data-placeholder="&#xf207;"></span></div>
-						<!-- <div class="wrap-input100">
-							<input class="input100" type="text" name="email" placeholder="E-mail">
 							<span class="focus-input100" data-placeholder="&#xf207;"></span>
-						</div> -->
+						</div>
 						<div class="wrap-input100">
 							<select class="input100" name="role" disabled>
 								<option value="" disabled>Role</option>
@@ -40,31 +37,72 @@
 								<option value="{{ item }}" {% if item == 'NH' %}selected{% endif %}>Role: {{ item }}</option>
 								{% endfor %}
 							</select>
-							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+							<span class="focus-input100" data-placeholder="&#xf158;"></span>
 						</div>
 						<div class="wrap-input100">
-							<select class="input100" name="role" disabled>
+							<select class="input100" name="manager" disabled>
+								<option value="" disabled>Manager</option>
+								{% for item in access_level.keys() %}
+								<option value="{{ item }}" {% if item == 'NH' %}selected{% endif %}>Manager: {{ item }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100 fa-group" data-placeholder="&#xf20d;"></span>
+						</div>
+						<div class="wrap-input100">
+							<select class="input100" name="schedule" disabled>
 								<option value="" disabled>Schedule</option>
 								{% for item in sched_options.values() %}
 								<option value="{{ item }}" {% if item == 'MTWTF' %}selected{% endif %}>Schedule: {{ item }}</option>
 								{% endfor %}
 							</select>
+							<span class="focus-input100" data-placeholder="&#xf32e;"></span>
+						</div>
+					</div>
+
+					<div class="wrap-input100" id="existing" data-validate="Enter Staff ID" style="display: none;">
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="staff_id" placeholder="Staff ID">
+							<span class="focus-input100" data-placeholder="&#xf200;"></span>
+						</div>
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="email" placeholder="Staff E-mail">
+							<span class="focus-input100" data-placeholder="&#xf15a;"></span>
+						</div>
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="first_name2" placeholder="First Name">
 							<span class="focus-input100" data-placeholder="&#xf207;"></span>
 						</div>
-						<!-- <div class="wrap-input100">
+						<div class="wrap-input100">
+							<input class="input100" type="text" name="last_name2" placeholder="Last Name">
+							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+						</div>
+						<div class="wrap-input100">
 							<select class="input100" name="role">
 								<option value="" disabled selected>Role</option>
 								{% for item in access_level.keys() %}
 								<option value="{{ item }}">{{ item }}</option>
 								{% endfor %}
 							</select>
-							<span class="focus-input100" data-placeholder="&#xf207;"></span>
+							<span class="focus-input100" data-placeholder="&#xf158;"></span>
+						</div>
+						<div class="wrap-input100">
+							<select class="input100" name="manager">
+								<option value="" disabled selected>Manager</option>
+								{% for manager in managers %}
+								<option value="{{ manager.staff_id }}">{{ manager.name }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100" data-placeholder="&#xf20d;"></span>
+						</div>
+						<!-- <div class="wrap-input100">
+							<select class="input100" name="schedule">
+								<option value="" disabled selected>Schedule</option>
+								{% for item in sched_options.values() %}
+								<option value="{{ item }}" {% if item == 'MTWTF' %}selected{% endif %}>{{ item }}</option>
+								{% endfor %}
+							</select>
+							<span class="focus-input100" data-placeholder="&#xf32e;"></span>
 						</div> -->
-					</div>
-
-					<div class="wrap-input100" id="existing" data-validate="Enter Staff ID" style="display: none;">
-						<input id="staff_id" class="input100" type="text" name="staff_id" placeholder="Staff ID">
-						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 					<div><center>{{ msg }}</center></div>
 					<div class="container-login100-form-btn">
@@ -103,5 +141,41 @@
 <!--===============================================================================================-->
 	<script src="../static/scripts/main.js"></script>
 	<script src="../static/scripts/register.js"></script>
+	<!-- <script>
+		
+function filterManagers() {
+    var roleSelect = document.getElementsByName('role')[0];
+    var managerSelect = document.getElementsByName('manager')[0];
+    var selectedRole = roleSelect.value;
+
+    // Clear the current manager options
+    managerSelect.innerHTML = '<option value="" disabled selected>Manager</option>';
+
+    // // Get access level for the selected role
+    var accessLevel = { access_level , tojson };
+    var managers = { managers , tojson };
+
+    // Determine the required access level for managers based on the selected role
+    var requiredAccessLevel;
+    if (selectedRole === 'SE' || selectedRole === 'T2' || selectedRole === 'TL') {
+        requiredAccessLevel = accessLevel.TM;
+    } else if (selectedRole === 'DM' || selectedRole === 'TM') {
+        requiredAccessLevel = accessLevel.OM;
+    } else if (selectedRole === 'OM') {
+        requiredAccessLevel = accessLevel.GM;
+    }
+
+    // Add the filtered manager options
+    managers.forEach(function(manager) {
+        if (manager.access_level >= requiredAccessLevel) {
+            var option = document.createElement('option');
+            option.value = manager.name;
+            option.text = 'Manager: ' + manager.name;
+            managerSelect.appendChild(option);
+        }
+    });
+}
+
+	</script> -->
 
 {% endblock %}

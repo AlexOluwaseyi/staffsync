@@ -56,6 +56,22 @@ class SE(Employee, Base):
         manager = models.storage.get(manager_id)
         return manager
 
+    def override_schedule(self, year, month, schedule):
+        """Override the scheule for a given year and month"""
+        from datetime import datetime
+        try:
+            schedules_dict = json.loads(self.schedules)
+        except (TypeError, json.JSONDecodeError):
+            schedules_dict = {}
+
+        year_str = str(year)
+        if year_str not in schedules_dict:
+            schedules_dict[year_str] = {calendar.month_name[i].upper():
+                                        None for i in range(1, 13)}
+        schedules_dict[year_str][month.upper()] = schedule
+        self.schedules = json.dumps(schedules_dict)
+        self.updated_at = datetime.now()
+
     def generate_schedule(self, year, month):
         """Generate a new schedule for SE for a given year and month"""
         import random
@@ -130,6 +146,16 @@ class SE(Employee, Base):
             return f'Schedule for {month} {year} not available yet.'
         return f'Schedule for {month} {year} is\
                 {schedules_dict[year_str][month_str]}'
+
+
+class NH(SE):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'NH')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
+        ...
 
 
 class T2(Employee, Base):

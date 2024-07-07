@@ -5,7 +5,7 @@ from enum import IntEnum
 
 class AccessLevel(IntEnum):
     SUPER_ADMIN = 12
-    ADMIN = 11
+    MGMT = 11
     GM = 10
     OM = 9
     BE = 8
@@ -16,13 +16,14 @@ class AccessLevel(IntEnum):
     T2 = 3
     SE = 2
     NH = 1
-    VISITORS = 0
+    VIS = 0
 
 
 roles_description = {
     'Super Admin': "Super Admin",
     'MGMT': "Admin.",
     "BE": "Business Enablement",
+    "GM": "Global Manager",
     'TM': "Team Manager",
     'DM': "Duty Manager",
     'OM': "Operations Manager",
@@ -37,8 +38,8 @@ roles_description = {
 
 # Create a dictionary to map roles to access levels
 access_level = {
-    "SUPER_ADMIN": AccessLevel.SUPER_ADMIN,
-    "ADMIN": AccessLevel.ADMIN,
+    "SUPER ADMIN": AccessLevel.SUPER_ADMIN,
+    "MGMT": AccessLevel.MGMT,
     "GM": AccessLevel.GM,
     "TM": AccessLevel.TM,
     "OM": AccessLevel.OM,
@@ -50,7 +51,7 @@ access_level = {
     "T2": AccessLevel.T2,
     "SE": AccessLevel.SE,
     "NH": AccessLevel.NH,
-    "VISITORS": AccessLevel.VISITORS
+    "VIS": AccessLevel.VIS
 }
 
 

@@ -26,10 +26,6 @@ function confirmSubmission() {
 
 function cancelOperation() {
     document.getElementById('confirm-dialog').close();
-    // document.getElementById('new_entry').value = '';
-    // document.getElementById('existing').value = '';
     document.getElementById('option_selector').value = '';
     document.getElementById('confirm-dialog').style.display = 'none';
-    // document.getElementById('email_input').style.display = 'none';
-    // document.getElementById('staff_input').style.display = 'none';
 }

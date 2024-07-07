@@ -272,6 +272,7 @@ iframe {
   top: 0;
   left: 0;
   pointer-events: none;
+  font-family: 'Font Awesome 5 Free';
 }
 
 .focus-input100::before {
