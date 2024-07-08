@@ -1,4 +1,6 @@
 // Javascript for password reset interactive page and pop-up
+
+// eslint-disable no-unused-vars
 function toggleInput() {
   const selector = document.getElementById("option_selector").value;
   const individual = document.getElementById("individual");
@@ -17,11 +19,13 @@ function toggleInput() {
   console.log(selector);
 }
 
+/* eslint-disable no-unused-vars */
 function confirmSubmission() {
   document.getElementById("reset-form").submit();
   document.getElementById("confirm-dialog").style.display = "none";
 }
 
+/* eslint-disable no-unused-vars */
 function cancelOperation() {
   document.getElementById("confirm-dialog").close();
   document.getElementById("staff_id").value = "";

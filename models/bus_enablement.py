@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+"""
+Modules, class and function definitions for Engineers
+Includes classes for BE
+Other classes to be included: HR, FIN, FD
+"""
+
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 

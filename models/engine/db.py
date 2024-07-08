@@ -1,24 +1,25 @@
 #!/usr/bin/python3
 """
-Contains the class DBStorage
+Module, class and method for DBStorage
 """
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from models.advocate import SE, NH, T2, TL
+from models.advocate import NH, SE, T2, TL
+from models.bus_enablement import BE
 from models.employee import Base
 from models.manager import DM, GM, OM, TM
 
 
 class DBStorage:
     """
-    Interacts with a particular database
+    Database setup and instantiations
     """
     __engine = None
     __session = None
-    _class = [DM, GM, OM, TM, SE, NH, T2, TL]
+    _class = [DM, GM, OM, TM, SE, NH, T2, TL, BE]
 
     def __init__(self):
         """Initializes the DB storage class"""
@@ -27,6 +28,7 @@ class DBStorage:
         self.__session = Session()
 
     def get_tables(self):
+        """Get the lists of tables in the database."""
         from sqlalchemy import inspect
         inspector = inspect(self.__engine)
         return inspector.get_table_names()
@@ -71,8 +73,8 @@ class DBStorage:
             self.__session.commit()
         except IntegrityError:
             self.__session.rollback()
-            return (f"IntegrityError: User with staff id already exist. "
-                    f"Unique constraint applied to staff_id.")
+            return ("IntegrityError: User with staff id already exist. "
+                    "Unique constraint applied to staff_id.")
 
     def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
@@ -129,6 +131,7 @@ class DBStorage:
         """
         Returns all objects of class `cls` where staff_id
         is not None and reports_to is `reports_to`.
+        (Method may be redundant, as get(reports_to=manager.staff_id works))
         """
         if cls not in self._class:
             return None

@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+"""
+Modules, class and function definitions for Engineers
+Includes classes for SE, T2, TL, NH
+"""
+
 import calendar
 import json
 
@@ -147,7 +152,12 @@ class SE(Employee, Base):
 
 
 class NH(SE):
+    """Class definition for New Hires
+    """
     def __init__(self, *args, **kwargs):
+        """Initialization for NH
+        Inherits from SE and but defines roles, access_level
+        """
         super().__init__(*args, **kwargs)
         role = kwargs.get('role', 'NH')
         if role not in access_level:
@@ -156,14 +166,14 @@ class NH(SE):
         ...
 
 
-class T2(Employee, Base):
-    __tablename__ = 'advocates'
-    __table_args__ = {'extend_existing': True}
-
-    reports_to = Column(Integer, nullable=True)
-    schedules = Column(String(256))
+class T2(SE):
+    """Class definition for Tier 2 Engineers
+    """
 
     def __init__(self, *args, **kwargs):
+        """Initialization for NH
+        Inherits from SE and but defines roles, access_level
+        """
         super().__init__(*args, **kwargs)
         role = kwargs.get('role', 'T2')
         if role not in access_level:
@@ -172,14 +182,14 @@ class T2(Employee, Base):
         ...
 
 
-class TL(Employee, Base):
-    __tablename__ = 'advocates'
-    __table_args__ = {'extend_existing': True}
-
-    reports_to = Column(Integer, nullable=True)
-    schedules = Column(String(256))
+class TL(SE):
+    """Class definition for Technical Leads
+    """
 
     def __init__(self, *args, **kwargs):
+        """Initialization for NH
+        Inherits from SE and but defines roles, access_level
+        """
         super().__init__(*args, **kwargs)
         role = kwargs.get('role', 'TL')
         if role not in access_level:

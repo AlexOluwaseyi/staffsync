@@ -3,8 +3,8 @@
 import json
 from datetime import timedelta
 
-from flask import (Flask, abort, flash, json, redirect,
-                   render_template, request, session, url_for)
+from flask import (Flask, abort, flash, redirect, render_template,
+                   request, session, url_for)
 from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
@@ -52,7 +52,7 @@ def index():
     title = "Welcome"
     if 'session_id' in session:  # Check if the user is signed in
         user = current_user
-        return redirect(url_for('dashboard', title="Dashboard"))
+        return redirect(url_for('dashboard', user=user))
     return render_template('index.html', title=title)
 
 
@@ -108,6 +108,33 @@ def dashboard(session_id=None):
     return render_template('dashboard.html', title=title, user=current_user)
 
 
+@app.route('/admin/<session_id>', methods=['GET', 'POST'],
+           strict_slashes=False)
+@app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def admin(session_id=None):
+    """Loads dashboard for current
+    signed in user
+    """
+    title = "Dashboard"
+    user = current_user
+    if user.access_level >= 5:
+        title = "Admin Dashboard"
+    return render_template('admin.html', title=title, user=current_user)
+
+
+@app.route('/profile/<session_id>', methods=['GET', 'POST'],
+           strict_slashes=False)
+@app.route('/profile', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def profile(session_id=None):
+    """ Profile page for current
+    signed in user.
+    """
+    title = "Profile"
+    return render_template('profile.html', title=title, user=current_user)
+
+
 @app.route('/register', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def register(session_id=None):
@@ -116,17 +143,16 @@ def register(session_id=None):
     import calendar
     from datetime import datetime
 
-    from models.permission import access_level, sched_options
-    from models.roles import roles_dict
+    from models.permission import access_level, roles_dict, sched_options
 
     title = "Register"
     user = current_user
     if user.access_level <= 10:
         abort(403)
+
     month_int = datetime.now().month
     current_month = calendar.month_name[month_int]
     current_year = datetime.now().year
-    all_managers = {}
     all = models.storage.all()
     managers = ([obj for obj in all.values() if obj.access_level > 5
                  and obj.access_level < 12])
@@ -179,7 +205,7 @@ def deactivate():
 
     if request.method == 'POST':
         if 'staff_id' in request.form:
-            staff_id = request.form.geT('staff_id')
+            staff_id = request.form.get('staff_id')
             employee = models.storage.get(staff_id=staff_id)
         elif 'email' in request.form:
             email = request.form['email']
@@ -192,17 +218,30 @@ def deactivate():
     return render_template('deactivate.html', title=title, msg=msg)
 
 
-@app.route('/genschedule', methods=['GET', 'POST'],
+@app.route('/schedules/<session_id>', methods=['GET'], strict_slashes=False)
+@app.route('/schedules', methods=['GET'], strict_slashes=False)
+@login_required
+def schedules(session_id=None):
+    """Loads the current and previous schedules
+    for employees.
+    Loads the schedule (json) from database.
+    """
+    user = current_user
+    title = "Schedules"
+    schedules = json.loads(user.schedules)
+    return render_template('schedules.html', title=title,
+                           user=user, schedules=schedules)
+
+
+@app.route('/generateschedule', methods=['GET', 'POST'],
            strict_slashes=False)
 @login_required
-def genschedule():
+def generateschedule():
     """Deactivate a selected employee account.add()
     """
     import calendar
     from datetime import datetime
 
-    month_int = datetime.now().month
-    current_month = calendar.month_name[month_int]
     months = [calendar.month_name[i] for i in range(1, 13)]
     current_year = datetime.now().year
     title = "Generate Schedule"
@@ -241,47 +280,6 @@ def genschedule():
 
     return render_template('genschedule.html', title=title, msg=msg,
                            current_year=current_year, months=months)
-
-
-@app.route('/admin/<session_id>', methods=['GET', 'POST'],
-           strict_slashes=False)
-@app.route('/admin', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def admin(session_id=None):
-    """Loads dashboard for current
-    signed in user
-    """
-    title = "Admin"
-    user = current_user
-    return render_template('admin.html', title=title, user=user)
-
-
-@app.route('/profile/<session_id>', methods=['GET', 'POST'],
-           strict_slashes=False)
-@app.route('/profile', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def profile(session_id=None):
-    """ Profile page for current
-    signed in user.
-    """
-    title = "Profile"
-    user = current_user
-    return render_template('profile.html', title=title, user=current_user)
-
-
-@app.route('/schedules/<session_id>', methods=['GET'], strict_slashes=False)
-@app.route('/schedules', methods=['GET'], strict_slashes=False)
-@login_required
-def schedules(session_id=None):
-    """Loads the current and previous schedules
-    for employees.
-    Loads the schedule (json) from database.
-    """
-    user = current_user
-    title = "Schedules"
-    schedules = json.loads(user.schedules)
-    return render_template('schedules.html', title=title,
-                           user=user, schedules=schedules)
 
 
 @app.route('/resetpassword', methods=['GET', 'POST'], strict_slashes=False)
@@ -335,7 +333,7 @@ def resetbyadmin():
             sleep(3)
             return redirect(referrer or url_for('admin'))
         else:
-            msg = f'No user found with E-mail or Staff ID provided.'
+            msg = 'No user found with E-mail or Staff ID provided.'
     return render_template('resetbyadmin.html', title=title, msg=msg)
 
 
@@ -345,7 +343,7 @@ def logout():
     """Log out current user
     and delete session.
     """
-    title = "Login"
+    title = "Logout"
     user = current_user
     user.authenticated = False
     models.storage.session.add(user)
@@ -353,7 +351,7 @@ def logout():
     logout_user()
     msg = 'You have been logged out successfully.'
     flash('You have been logged out successfully.', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('login', title=title, msg=msg))
 
 
 if __name__ == '__main__':
