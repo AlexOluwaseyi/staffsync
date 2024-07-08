@@ -3,13 +3,13 @@
 Contains the class DBStorage
 """
 
-from models.employee import Employee, Base
-from models.advocate import SE
-from models.manager import TM, OM, DM, GM
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-import models
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+from models.advocate import SE, NH, T2, TL
+from models.employee import Base
+from models.manager import DM, GM, OM, TM
 
 
 class DBStorage:
@@ -18,20 +18,18 @@ class DBStorage:
     """
     __engine = None
     __session = None
-    # _class = ['GM', 'TM', 'OM', 'DM', 'SE']
-    _class = [TM, SE]
+    _class = [DM, GM, OM, TM, SE, NH, T2, TL]
 
     def __init__(self):
         """Initializes the DB storage class"""
         self.__engine = create_engine("sqlite:///staffsync.db")
-        # Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
 
     def get_tables(self):
         from sqlalchemy import inspect
         inspector = inspect(self.__engine)
-        print(inspector.get_table_names())
+        return inspector.get_table_names()
 
     @property
     def session(self):
@@ -40,7 +38,6 @@ class DBStorage:
 
     def all(self, cls=None):
         """Returns object dictionary of the data in database"""
-        from models.employee import Employee
         all_dict = {}
         if cls is None:
             for class_type in self._class:
@@ -66,7 +63,7 @@ class DBStorage:
             self.__session.add(obj)
         except IntegrityError as e:
             self.__session.rollback()
-            print(f"IntegrityError: {e._message}")
+            return f"IntegrityError: {e._message}"
 
     def save(self):
         """Commit all changes of the current database session"""
@@ -74,8 +71,8 @@ class DBStorage:
             self.__session.commit()
         except IntegrityError:
             self.__session.rollback()
-            print(f"IntegrityError: User with staff id already exist. \
-                  Unique constraint applied to staff_id.")
+            return (f"IntegrityError: User with staff id already exist. "
+                    f"Unique constraint applied to staff_id.")
 
     def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
@@ -111,10 +108,9 @@ class DBStorage:
                     return result
             return None
 
+        """Check for wrong class name"""
         if cls is not None and cls not in self._class:
             return None
-
-        # ... (rest of the code)
 
         if staff_id is not None and not kwargs:
             result = self.__session.query(cls)\

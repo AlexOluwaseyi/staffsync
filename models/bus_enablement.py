@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-from models.employee import Employee, Base
-from models.permission import AccessLevel, Permission, access_level
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime, Integer
+
+from models.employee import Base, Employee
+from models.permission import AccessLevel, Permission, access_level
 
 
 class BE(Employee, Base):

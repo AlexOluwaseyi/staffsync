@@ -1,28 +1,24 @@
-
-
-
-
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 
 @font-face {
   font-family: Poppins-Regular;
-  src: url('../fonts/poppins/Poppins-Regular.ttf'); 
+  src: url('../fonts/poppins/Poppins-Regular.ttf');
 }
 
 @font-face {
   font-family: Poppins-Medium;
-  src: url('../fonts/poppins/Poppins-Medium.ttf'); 
+  src: url('../fonts/poppins/Poppins-Medium.ttf');
 }
 
 @font-face {
   font-family: Poppins-Bold;
-  src: url('../fonts/poppins/Poppins-Bold.ttf'); 
+  src: url('../fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
   font-family: Poppins-SemiBold;
-  src: url('../fonts/poppins/Poppins-SemiBold.ttf'); 
+  src: url('../fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 
@@ -32,61 +28,61 @@
 [ RESTYLE TAG ]*/
 
 * {
-	margin: 0px; 
-	padding: 0px; 
-	box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
 }
 
 body, html {
-	height: 100%;
-	font-family: Poppins-Regular, sans-serif;
+  height: 100%;
+  font-family: Poppins-Regular, sans-serif;
 }
 
 /*---------------------------------------------*/
 a {
-	font-family: Poppins-Regular;
-	font-size: 14px;
-	line-height: 1.7;
-	color: #666666;
-	margin: 0px;
-	transition: all 0.4s;
-	-webkit-transition: all 0.4s;
+  font-family: Poppins-Regular;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #666666;
+  margin: 0px;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
 }
 
 a:focus {
-	outline: none !important;
+  outline: none !important;
 }
 
 a:hover {
-	text-decoration: none;
+  text-decoration: none;
   color: #fff;
 }
 
 /*---------------------------------------------*/
-h1,h2,h3,h4,h5,h6 {
-	margin: 0px;
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
 }
 
 p {
-	font-family: Poppins-Regular;
-	font-size: 14px;
-	line-height: 1.7;
-	color: #666666;
-	margin: 0px;
+  font-family: Poppins-Regular;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #666666;
+  margin: 0px;
 }
 
 ul, li {
-	margin: 0px;
-	list-style-type: none;
+  margin: 0px;
+  list-style-type: none;
 }
 
 
 /*---------------------------------------------*/
 input {
-	outline: none;
-	border: none;
+  outline: none;
+  border: none;
 }
 
 textarea {
@@ -98,25 +94,69 @@ textarea:focus, input:focus {
   border-color: transparent !important;
 }
 
-input:focus::-webkit-input-placeholder { color:transparent; }
-input:focus:-moz-placeholder { color:transparent; }
-input:focus::-moz-placeholder { color:transparent; }
-input:focus:-ms-input-placeholder { color:transparent; }
+input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
 
-textarea:focus::-webkit-input-placeholder { color:transparent; }
-textarea:focus:-moz-placeholder { color:transparent; }
-textarea:focus::-moz-placeholder { color:transparent; }
-textarea:focus:-ms-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder {
+  color: transparent;
+}
 
-input::-webkit-input-placeholder { color: #fff;}
-input:-moz-placeholder { color: #fff;}
-input::-moz-placeholder { color: #fff;}
-input:-ms-input-placeholder { color: #fff;}
+input:focus::-moz-placeholder {
+  color: transparent;
+}
 
-textarea::-webkit-input-placeholder { color: #fff;}
-textarea:-moz-placeholder { color: #fff;}
-textarea::-moz-placeholder { color: #fff;}
-textarea:-ms-input-placeholder { color: #fff;}
+input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+textarea:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+textarea:focus:-moz-placeholder {
+  color: transparent;
+}
+
+textarea:focus::-moz-placeholder {
+  color: transparent;
+}
+
+textarea:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+input::-webkit-input-placeholder {
+  color: #fff;
+}
+
+input:-moz-placeholder {
+  color: #fff;
+}
+
+input::-moz-placeholder {
+  color: #fff;
+}
+
+input:-ms-input-placeholder {
+  color: #fff;
+}
+
+textarea::-webkit-input-placeholder {
+  color: #fff;
+}
+
+textarea:-moz-placeholder {
+  color: #fff;
+}
+
+textarea::-moz-placeholder {
+  color: #fff;
+}
+
+textarea:-ms-input-placeholder {
+  color: #fff;
+}
 
 label {
   margin: 0;
@@ -125,17 +165,17 @@ label {
 
 /*---------------------------------------------*/
 button {
-	outline: none !important;
-	border: none;
-	background: transparent;
+  outline: none !important;
+  border: none;
+  background: transparent;
 }
 
 button:hover {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 iframe {
-	border: none !important;
+  border: none !important;
 }
 
 
@@ -158,7 +198,7 @@ iframe {
 }
 
 .container-login100 {
-  width: 100%;  
+  width: 100%;
   min-height: 100vh;
   display: -webkit-box;
   display: -webkit-flex;
@@ -174,7 +214,7 @@ iframe {
   background-position: center;
   background-size: cover;
   position: relative;
-  z-index: 1;  
+  z-index: 1;
 }
 
 .container-login100::before {
@@ -186,7 +226,7 @@ iframe {
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(255,255,255,0.9);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .wrap-login100 {
@@ -211,7 +251,7 @@ iframe {
 }
 
 .login100-form-logo {
-  font-size: 60px; 
+  font-size: 60px;
   color: #333333;
 
   display: -webkit-box;
@@ -246,7 +286,14 @@ iframe {
 .wrap-input100 {
   width: 100%;
   position: relative;
-  border-bottom: 2px solid rgba(255,255,255,0.24);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.24);
+  margin-bottom: 30px;
+}
+
+.wrap-input101 {
+  width: 100%;
+  position: relative;
+  /* border-bottom: 2px solid rgba(255, 255, 255, 0.24); */
   margin-bottom: 30px;
 }
 
@@ -263,7 +310,7 @@ iframe {
   padding: 0 5px 0 38px;
 }
 
-/*---------------------------------------------*/ 
+/*---------------------------------------------*/
 .focus-input100 {
   position: absolute;
   display: block;
@@ -315,21 +362,21 @@ iframe {
   padding-left: 5px;
 }
 
-.input100:focus + .focus-input100::after {
+.input100:focus+.focus-input100::after {
   top: -22px;
   font-size: 18px;
 }
 
-.input100:focus + .focus-input100::before {
+.input100:focus+.focus-input100::before {
   width: 100%;
 }
 
-.has-val.input100 + .focus-input100::after {
+.has-val.input100+.focus-input100::after {
   top: -22px;
   font-size: 18px;
 }
 
-.has-val.input100 + .focus-input100::before {
+.has-val.input100+.focus-input100::before {
   width: 100%;
 }
 
@@ -356,7 +403,20 @@ iframe {
   font-size: 13px;
   color: #fff;
   line-height: 1.2;
+  display: block;
+  position: relative;
+  padding-left: 26px;
+  cursor: pointer;
+}
 
+.input-checkbox101 {
+  display: none;
+}
+
+.label-checkbox101 {
+  font-family: Poppins-Regular;
+  color: #fff !important;
+  line-height: 1.2;
   display: block;
   position: relative;
   padding-left: 26px;
@@ -390,7 +450,38 @@ iframe {
   transform: translateY(-50%);
 }
 
-.input-checkbox100:checked + .label-checkbox100::before {
+.input-checkbox100:checked+.label-checkbox100::before {
+  color: #555555;
+}
+
+.label-checkbox101::before {
+  content: "\f26b";
+  font-family: Material-Design-Iconic-Font;
+  font-size: 13px;
+  color: transparent;
+
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background: #fff;
+  left: 0;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.input-checkbox101:checked+.label-checkbox101::before {
   color: #555555;
 }
 
@@ -553,10 +644,10 @@ iframe {
 #password-input:-webkit-autofill:focus,
 #password-input:-webkit-autofill:hover,
 #password-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #964af6 inset !important;
-    background-color: white !important;
-    -webkit-text-fill-color: black !important;
-    
+  -webkit-box-shadow: 0 0 0 30px #964af6 inset !important;
+  background-color: white !important;
+  -webkit-text-fill-color: black !important;
+
 }
 
 /* Autofill background color fix */
@@ -565,8 +656,8 @@ iframe {
 #username-input:-webkit-autofill:focus,
 #username-input:-webkit-autofill:hover,
 #username-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #8f54f8 inset !important;
-    background-color: white !important;
-    -webkit-text-fill-color: black !important;
-    
+  -webkit-box-shadow: 0 0 0 30px #8f54f8 inset !important;
+  background-color: white !important;
+  -webkit-text-fill-color: black !important;
+
 }

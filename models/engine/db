@@ -3,13 +3,14 @@
 Contains the class DBStorage
 """
 
-# from models.base_model import Base, BaseModel
-from models.employee import Employee, Base
-from models.advocate import SE
-from models.manager import TM, OM, DM, GM
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+
 import models
+from models.advocate import SE
+# from models.base_model import Base, BaseModel
+from models.employee import Base, Employee
+from models.manager import DM, GM, OM, TM
 
 
 class DBStorage:

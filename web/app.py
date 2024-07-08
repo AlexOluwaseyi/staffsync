@@ -1,20 +1,17 @@
 #!/usr/bin/python3
 
-import models
-from web.creds import secretKey
-from flask import (Flask, flash, render_template, session,
-                   redirect, url_for, request, abort, make_response,
-                   jsonify, json)
-from flask_login import (LoginManager, current_user, login_user,
-                         login_required, logout_user)
-from flask_bcrypt import Bcrypt
-from flask_migrate import Migrate
-from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
 import json
 from datetime import timedelta
 
+from flask import (Flask, abort, flash, json, redirect,
+                   render_template, request, session, url_for)
+from flask_bcrypt import Bcrypt
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
+from flask_migrate import Migrate
+
+import models
+from web.creds import secretKey
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secretKey
@@ -32,9 +29,18 @@ login_manager.init_app(app)
 bcrypt.init_app(app)
 
 
+@app.template_filter('hasattr')
+def hasattr_filter(obj, attr):
+    return hasattr(obj, attr)
+
+
+app.jinja_env.filters['hasattr'] = hasattr_filter
+
+
 @login_manager.user_loader
 def user_loader(id):
-    """Given *staff_id*, return the associated User object.
+    """
+    Given *staff_id*, return the associated User object.
     # :param unicode staff_id: user_id (email) user to retrieve
     """
     return models.storage.get(id)
@@ -44,8 +50,7 @@ def user_loader(id):
 def index():
     """Index page"""
     title = "Welcome"
-    print(session)
-    if '_id' in session:  # Check if the user is signed in
+    if 'session_id' in session:  # Check if the user is signed in
         user = current_user
         return redirect(url_for('dashboard', title="Dashboard"))
     return render_template('index.html', title=title)
@@ -62,25 +67,25 @@ def login():
         email = request.form['email'].lower()
         password_input = request.form['password']
         remember = 'remember-me' in request.form
-        print(f'rememeber is {remember}')
         user = models.storage.get(email=email)
         if user:
-            password = user.password
-            pw_check = bcrypt.check_password_hash(password,
-                                                  password_input)
-            if pw_check:
-                print('pw check passed.')
-                user.authenticated = True
-                models.storage.session.add(user)
-                models.storage.session.commit()
-                login_user(user, remember=remember)
-                # session_id = session['_id']
-                session_id = user.id
-                session['session_id'] = session_id
-                return redirect(url_for('admin', session_id=session_id))
+            if user.status:
+                password = user.password
+                pw_check = bcrypt.check_password_hash(password,
+                                                      password_input)
+                if pw_check:
+                    user.authenticated = True
+                    models.storage.session.add(user)
+                    models.storage.session.commit()
+                    login_user(user, remember=remember)
+                    # session_id = session['_id']
+                    session_id = user.id
+                    session['session_id'] = session_id
+                    return redirect(url_for('admin', session_id=session_id))
+                else:
+                    msg = 'You have entered a wrong password.'
             else:
-                print('pw check failed')
-                msg = 'You have entered a wrong password.'
+                msg = f'Account for {user.name} has been deactivated'
 
         else:
             msg = 'No user found with this email'
@@ -104,27 +109,24 @@ def dashboard(session_id=None):
 
 
 @app.route('/register', methods=['GET', 'POST'], strict_slashes=False)
-# @login_required
+@login_required
 def register(session_id=None):
     """Add a new or existing employee record
     """
+    import calendar
+    from datetime import datetime
+
     from models.permission import access_level, sched_options
     from models.roles import roles_dict
-    from datetime import datetime
-    import calendar
 
     title = "Register"
     user = current_user
-    # access_level = access_level
-    # if user.access_level <= 10:
-    #     abort(403)
+    if user.access_level <= 10:
+        abort(403)
     month_int = datetime.now().month
     current_month = calendar.month_name[month_int]
     current_year = datetime.now().year
     all_managers = {}
-    from models.manager import TM, DM, OM, GM
-    _class = [TM, DM, OM, GM]
-    # for cls in _class:
     all = models.storage.all()
     managers = ([obj for obj in all.values() if obj.access_level > 5
                  and obj.access_level < 12])
@@ -139,29 +141,106 @@ def register(session_id=None):
             manager = models.storage.get(designation='NH')
             reports_to = manager.staff_id
             entry = model(first_name=first_name, last_name=last_name,
-                         reports_to=reports_to, role=role)
+                          reports_to=reports_to, role=role)
             entry.override_schedule(current_year, current_month, 'MTWTF')
             entry.save()
 
         elif option_selector == 'existing':
             first_name = request.form.get('first_name2')
             last_name = request.form.get('last_name2')
-            print(f'{first_name} - {last_name}')
             staff_id = request.form.get('staff_id')
             email = request.form.get('email')
             role = request.form.get('role')
             manager_id = request.form.get('manager')
             manager = models.storage.get(manager_id)
-            reports_to=manager.staff_id
+            reports_to = manager.staff_id
             model = roles_dict.get(role)
             entry = model(first_name=first_name, last_name=last_name,
                           staff_id=staff_id, email=email,
                           reports_to=reports_to, role=role)
             entry.generate_schedule(current_year, current_month)
-            # entry.save
+            entry.save()
     return render_template('register.html', title=title, user=current_user,
                            access_level=access_level, roles_dict=roles_dict,
                            sched_options=sched_options, managers=managers)
+
+
+@app.route('/deactivate', methods=['GET', 'POST'],
+           strict_slashes=False)
+@login_required
+def deactivate():
+    """Deactivate a selected employee account.add()
+    """
+    title = "Deactivate"
+    msg = ''
+    user = current_user
+    if user.access_level <= 10:
+        abort(403)
+
+    if request.method == 'POST':
+        if 'staff_id' in request.form:
+            staff_id = request.form.geT('staff_id')
+            employee = models.storage.get(staff_id=staff_id)
+        elif 'email' in request.form:
+            email = request.form['email']
+            employee = models.storage.get(email=email)
+        if employee:
+            employee.deactivate()
+            employee.save()
+            msg = f'Account for {employee.name} deactivated successful.'
+            return redirect(url_for('admin'))
+    return render_template('deactivate.html', title=title, msg=msg)
+
+
+@app.route('/genschedule', methods=['GET', 'POST'],
+           strict_slashes=False)
+@login_required
+def genschedule():
+    """Deactivate a selected employee account.add()
+    """
+    import calendar
+    from datetime import datetime
+
+    month_int = datetime.now().month
+    current_month = calendar.month_name[month_int]
+    months = [calendar.month_name[i] for i in range(1, 13)]
+    current_year = datetime.now().year
+    title = "Generate Schedule"
+    msg = ''
+    user = current_user
+    if user.access_level <= 5:
+        abort(403)
+
+    if request.method == 'POST':
+        option_selector = request.form.get('option_selector')
+        if option_selector == 'individual':
+            staff_id = request.form.get('staff_id')
+            month = request.form.get('month')
+            year = request.form.get('year')
+            employee = models.storage.get(staff_id)
+            if employee:
+                employee.generate_schedule(year, month)
+                employee.save()
+                msg = (f'Schedule for {employee.name} for {month.title()} '
+                       f'{year} created successfully.')
+            else:
+                msg = f'No record found for Staff ID {staff_id}'
+        elif option_selector == 'collective':
+            month = request.form.get('month')
+            year = request.form.get('year')
+            all_employees = models.storage.all().values()
+            filtered_employee = []
+            for obj in all_employees:
+                if obj.access_level == 4:  # in range(2, 5):
+                    filtered_employee.append(obj)
+            for employee in filtered_employee:
+                employee.generate_schedule(year, month)
+                employee.save()
+            msg = f'Schedule for {month.title()} {year} created successfully.'
+        # return redirect(url_for('admin'))
+
+    return render_template('genschedule.html', title=title, msg=msg,
+                           current_year=current_year, months=months)
 
 
 @app.route('/admin/<session_id>', methods=['GET', 'POST'],
@@ -174,7 +253,7 @@ def admin(session_id=None):
     """
     title = "Admin"
     user = current_user
-    return render_template('admin.html', title=title, user=current_user)
+    return render_template('admin.html', title=title, user=user)
 
 
 @app.route('/profile/<session_id>', methods=['GET', 'POST'],
@@ -237,7 +316,7 @@ def resetbyadmin():
     the employee with forgotten password.
     """
     user = current_user
-    if user.access_level <= 5:
+    if user.access_level <= 10:
         abort(403)
     title = 'Reset by Admin'
     msg = ''
@@ -245,13 +324,13 @@ def resetbyadmin():
     if request.method == 'POST':
         if 'staff_id' in request.form:
             staff_id = request.form['staff_id']
-            user = models.storage.get(staff_id=staff_id)
+            employee = models.storage.get(staff_id=staff_id)
         elif 'email' in request.form:
             email = request.form['email']
-            user = models.storage.get(email=email)
-        if user:
-            user.reset_password()
-            msg = f'Password reset for {user.name} successful.'
+            employee = models.storage.get(email=email)
+        if employee:
+            employee.reset_password()
+            msg = f'Password reset for {employee.name} successful.'
             from time import sleep
             sleep(3)
             return redirect(referrer or url_for('admin'))
@@ -275,19 +354,6 @@ def logout():
     msg = 'You have been logged out successfully.'
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('login'))
-
-
-def clean(text):
-    # Remove leading and trailing whitespace, tabs, and newlines
-    text = text.strip()
-
-    # Replace tabs and newlines within the string
-    text = text.replace('\t', '').replace('\n', '').replace('\r', '')
-
-    # Remove all spaces within the string
-    text = text.replace(' ', '')
-
-    return text
 
 
 if __name__ == '__main__':

@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-# from models.base_model import Base
-from models.employee import Employee, Base
-from models.manager import TM
-from models.permission import AccessLevel, Permission, access_level
-# from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer
-import models
 import calendar
 import json
+
+from sqlalchemy import Column, Integer, String
+
+import models
+from models.employee import Base, Employee
+from models.manager import TM
+from models.permission import access_level
 
 
 class SE(Employee, Base):
@@ -19,11 +19,6 @@ class SE(Employee, Base):
 
     reports_to = Column(Integer, nullable=True)
     schedules = Column(String(256))
-
-    # schedule = {'January': None, 'February': None, 'March': None,
-    #             'April': None, 'May': None, 'June': None, 'July': None,
-    #             'August': None, 'September': None, 'October': None,
-    #             'November': None, 'December': None}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,8 +94,10 @@ class SE(Employee, Base):
             "7": "MTWTF"
         }
 
-        # Retrieve recent schedules
-        # (convert None to empty string to avoid errors)
+        """
+        Retrieve recent schedules
+        (convert None to empty string to avoid errors)
+        """
         recent_schedules = [v for v in schedules_dict[year_str].values()
                             if v is not None][-4:]
 
@@ -114,8 +111,9 @@ class SE(Employee, Base):
             schedules_dict[year_str][month.upper()] = \
              random.choice(list(sched_options.values()))
 
-        # Update self.schedules with the new schedule
-        print(schedules_dict)
+        """
+        Update self.schedules with the new schedule
+        """
         self.schedules = json.dumps(schedules_dict)
         try:
             models.storage.session.add(self)

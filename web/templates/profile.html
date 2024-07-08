@@ -106,7 +106,7 @@
               <strong class="basic_data_value">Role Description:</strong> <span class="schedule">{{ user.desc }}</span>
           </div>
           <div class="basic_data_item">
-              <strong class="basic_data_value">Manager:</strong> <span class="schedule">{{ user.reports_to }}</span>
+              <strong class="basic_data_value">Manager:</strong> <span class="schedule">{{ user.get_manager().name }}</span>
           </div>
       </div>
     </div>

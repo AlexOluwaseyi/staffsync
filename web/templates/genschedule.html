@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+{% block content %}
+<link rel="stylesheet"
+	href="../static/styles/dialog.css">
+<div class="limiter">
+	<div class="container-login100"
+		style="background-image: url('../static/images/bg-01.jpg');">
+		<div class="wrap-login100">
+			<form id="reset-form"
+				class="login100-form"
+				method="POST"
+				onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').showModal(); document.getElementById('confirm-dialog').style.display = 'block';">
+				<span class="login100-form-logo">
+					<img src="../static/images/StaffSync-white@4x.png"
+						alt="StaffSync Logo"
+						width="64px"
+						height="64px">
+				</span>
+
+				<span class="login100-form-title p-b-34 p-t-27">
+					Generate Schedule
+				</span>
+				<div class="wrap-input100 validate-input" data-validate="Generate Schedule">
+					<select id="option_selector" class="input100" name="option_selector" placeholder="---" onchange="toggleInput()">
+						<option value=""> Select an option: </option>
+						<option value="individual">Create for one</option>
+						<option value="collective">Create for all</option>
+					</select>
+
+				</div>
+
+				<div class="wrap-input101" id="individual" data-validate="Individual" style="display: none;">
+					<div class="wrap-input100">
+						<input id="staff_id" class="input100" type="text" name="staff_id" placeholder="Staff ID">
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<div class="wrap-input100">
+						<select id="year" class="input100" name="year" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an year: </option>
+							<option value="{{ current_year }}">{{ current_year }}</option>
+						</select>
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<div class="wrap-input100">
+						<select id="year" class="input100" name="month" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an month: </option>
+							{% for month in months %}
+							<option value="{{ month }}">{{ month }}</option>
+							{% endfor %}
+						</select>
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<center><input class="input-checkbox101" id="createone" type="checkbox" name="create_all">
+						<label class="label-checkbox101" for="createone">
+							Proceed to create schedule
+						</label></center>
+				</div>
+				
+
+				<div class="wrap-input101" id="collective" data-validate="Checkbox for all" style="display: none;">
+					<div class="wrap-input100">
+						<select id="year" class="input100" name="year" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an year: </option>
+							<option value="{{ current_year }}">{{ current_year }}</option>
+						</select>
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<div class="wrap-input100">
+						<select id="year" class="input100" name="month" placeholder="---" onchange="toggleInput()">
+							<option value=""> Select an month: </option>
+							{% for month in months %}
+							<option value="{{ month }}">{{ month }}</option>
+							{% endfor %}
+						</select>
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+					<center><input class="input-checkbox101" id="createall" type="checkbox" name="create_all">
+						<label class="label-checkbox101" for="createall">
+							Proceed to create schedule for all
+						</label></center>
+				</div>
+				<div class="wrap-input101">
+					<center>{{ msg }}</center>
+				</div>
+				<div class="container-login100-form-btn">
+					<button id="btnsubmit" type="submit" class="login100-form-btn" disabled>
+						Generate Schedule
+					</button>
+				</div>
+			</form>
+			<dialog id="confirm-dialog"
+				class="dialog-overlay"
+				style="display: none;">
+				<p>Are you sure you want to proceed?</p>
+				<div class="dialog-buttons">
+					<button onclick="confirmSubmission()">Yes</button>
+					<button onclick="cancelOperation()">No</button>
+				</div>
+			</dialog>
+		</div>
+	</div>
+</div>
+
+<div id="dropDownSelect1"></div>
+
+<!--===============================================================================================-->
+<script src="../static/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+<script src="../static/vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+<script src="../static/vendor/bootstrap/js/popper.js"></script>
+<script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+<script src="../static/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+<script src="../static/vendor/daterangepicker/moment.min.js"></script>
+<script src="../static/vendor/daterangepicker/daterangepicker.js"></script>
+<!--===============================================================================================-->
+<script src="../static/vendor/countdowntime/countdowntime.js"></script>
+<!--===============================================================================================-->
+<script src="../static/scripts/main.js"></script>
+<script src="../static/scripts/gensched.js"></script>
+
+{% endblock %}

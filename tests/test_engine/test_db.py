@@ -1,15 +1,14 @@
 #!/usr/bin/python3
+
 """
 Contains the TestDBStorageDocs and TestDBStorage classes
 """
+import random
 import unittest
-from unittest import mock
-from models.base_model import Base
+
+import models
 from models.advocate import SE
 from models.manager import TM
-from models.engine.db import DBStorage
-import models
-import random
 
 staff_id = random.randint(1, 3000)
 
@@ -22,8 +21,6 @@ class TestDBStorage(unittest.TestCase):
         """Test that all returns a dictionary"""
         self.assertIs(type(models.storage.all()), dict)
         users = models.storage.all()
-        print(all)
-        # self.assertIs(type(models.storage.all(SE)), dict)
 
     def test_new_method(self):
         """Test that all returns a dictionary"""
@@ -73,24 +70,12 @@ class TestDBStorage(unittest.TestCase):
         models.storage.delete(user)
         self.assertIn(user, models.storage._DBStorage__session.deleted)
 
-    def setUp(self):
-        """Set up a temporary database and a test session"""
-        self.storage = DBStorage()
-
-    def tearDown(self):
-        self.storage.close()
-    #     """Tear down the test session and drop the database"""
-        # self.storage.__session.close()
-        # Base.metadata.drop_all(self.storage._DBStorage__engine)
-
     def test_get_se(self):
         """Test that get() retrieves the correct SE object"""
         new_se = SE(staff_id=staff_id)
         models.storage.new(new_se)
         models.storage.save()
-        # print(f'staff_id - {staff_id}')
         get_se = self.storage.get(SE, staff_id)
-        # print(get_se.desc)
         self.assertIsNotNone(get_se)
         self.assertEqual(get_se.staff_id, staff_id)
         self.assertEqual(get_se.first_name, None)
@@ -100,9 +85,7 @@ class TestDBStorage(unittest.TestCase):
         new_se = SE(staff_id=staff_id)
         models.storage.new(new_se)
         models.storage.save()
-        # print(f'staff_id - {staff_id}')
         get_se = self.storage.get(staff_id)
-        # print(get_se.desc)
         self.assertIsNotNone(get_se)
         self.assertEqual(get_se.staff_id, staff_id)
         self.assertEqual(get_se.first_name, None)
@@ -110,16 +93,9 @@ class TestDBStorage(unittest.TestCase):
     def test_get_se_reports_to(self):
         from models.manager import TM
         """Test that get() retrieves the correct SE object"""
-        # new_man = TM(staff_id=staff_id, designation='TL')
-        # models.storage.new(new_man)
-        # models.storage.save()
         get_se = self.storage.get(TM, access_level=4)
-        # print(f'\n len of get_se - {len(get_se)}\n')
         for get_se_each in get_se:
-            # print(get_se_each.to_dict())
             self.assertIsNotNone(get_se_each)
-            # self.assertEqual(get_se_each.staff_id, staff_id)
-            # self.assertEqual(get_se_each.first_name, None)
 
     def test_get_non_existent_se(self):
         """Test that get() returns None for a non-existent SE object"""

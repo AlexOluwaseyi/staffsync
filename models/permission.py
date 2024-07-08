@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
+"""
+Module for definition of access level, permissions
+(based on access level), roles and roles description
+"""
+
 from enum import IntEnum
 
 
 class AccessLevel(IntEnum):
+    """
+    Access level enumeration definition
+    """
     SUPER_ADMIN = 12
     MGMT = 11
     GM = 10
@@ -19,6 +27,9 @@ class AccessLevel(IntEnum):
     VIS = 0
 
 
+"""
+String literal description for organizational roles
+"""
 roles_description = {
     'Super Admin': "Super Admin",
     'MGMT': "Admin.",
@@ -36,7 +47,9 @@ roles_description = {
 }
 
 
-# Create a dictionary to map roles to access levels
+"""
+Create a dictionary to map roles to access levels
+"""
 access_level = {
     "SUPER ADMIN": AccessLevel.SUPER_ADMIN,
     "MGMT": AccessLevel.MGMT,
@@ -55,6 +68,12 @@ access_level = {
 }
 
 
+"""
+Principle of least Privilege (POLP)
+Not yet implemented
+"""
+
+
 class Permission:
     """
     VIEW_REPORTS = AccessLevel.EMPLOYEE
@@ -65,6 +84,9 @@ class Permission:
     pass
 
 
+"""
+Available employee schedule options.
+"""
 sched_options = {
             "1": "TWTFS",
             "2": "TWTFS",

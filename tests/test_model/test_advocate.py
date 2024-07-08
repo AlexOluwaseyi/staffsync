@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
 import unittest
+
 from models.advocate import SE
-from models.permission import AccessLevel, roles_description
 from models.employee import Employee
-# from models.base_model import BaseModel
 
 
 class TestAdvocate(unittest.TestCase):

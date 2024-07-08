@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-from models.employee import Employee, Base
-# from models.advocate import Base
-from sqlalchemy import Column, String, Integer
+
+from sqlalchemy import Column, Integer, String
+
 import models
-import json
+from models.employee import Base, Employee
 
 
 class TM(Employee, Base):

@@ -1,15 +1,23 @@
 #!/usr/bin/python3
 
-from uuid import uuid4
+"""
+Base module for employee model
+
+Class definition
+  - Class Employee
+"""
+
+import random
 from datetime import datetime
+from uuid import uuid4
+
+from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, DateTime, Integer, Boolean
+
 import models
 from models.permission import access_level, roles_description
-from flask_login import UserMixin
-from flask_bcrypt import Bcrypt
-import random
-
 
 time_format = "%Y-%m-%dT%H:%M:%S.%f"
 Base = declarative_base()
@@ -17,6 +25,36 @@ bcrypt = Bcrypt()
 
 
 class Employee(UserMixin):
+    """Base class for all employees
+
+    Object attributes for all employees:
+      - Firstname
+      - Lastname
+      - Email
+      - Default password
+      - Staff ID and UUID4()
+      - Date of object creation
+      - Date of object update
+      - Status of object: True for active and False for deactivated
+      - Role and role description
+      - Access level based on role
+      - Annual leave counter
+
+    Object methods:
+      - Initialization
+      - Deactivate account
+      - Reactivate account
+      - Update password
+      - Reset password
+      - Save object
+      - Get roles description
+      - Get manager object for current employee
+      - String representation of object
+      - Dictionary representation of object
+    argument -- description
+    Return: return_description
+    """
+
     domain = 'localhost'
     # __tablename__ = 'employees'
 
@@ -27,8 +65,8 @@ class Employee(UserMixin):
     first_name = Column(String(256), nullable=True)
     last_name = Column(String(256), nullable=True)
     status = Column(Boolean, default=True)
-    email = Column(String(256), nullable=True)
-    password = Column(String(256), nullable=True)
+    email = Column(String(256), nullable=False)
+    password = Column(String(256), nullable=False)
     name = Column(String(256), nullable=True)
     role = Column(String(16), nullable=False)
     desc = Column(String(128), nullable=False)
@@ -36,6 +74,9 @@ class Employee(UserMixin):
     annual_leave = Column(Integer, default=10)
 
     def __init__(self, **kwargs):
+        """Initializes object with kwargs
+        and populate object db table column
+        """
         for key, value in kwargs.items():
             if key in {'created_at', 'updated_at'} and isinstance(value, str):
                 value = datetime.strptime(value, time_format)
@@ -55,43 +96,38 @@ class Employee(UserMixin):
             raise ValueError(f"Invalid role: {role}")
         if 'email' not in kwargs:
             if self.first_name and self.last_name:
-                self.name = " ".join([self.first_name, self.last_name])
+                self.name = (f"{self.first_name.title()} "
+                             f"{self.last_name.title()}")
                 email = (f"{self.first_name.lower()}."
-                        f"{self.last_name.lower()}@{self.domain}")
+                         f"{self.last_name.lower()}@{self.domain}")
                 while models.storage.get(email=email) is not None:
                     random_digit = str(random.randint(0, 9))
-                    email = (f"{self.first_name.lower()}.{self.last_name.lower()}"
-                            f"{random_digit}@{self.domain}")
+                    email = (f"{self.first_name.lower()}."
+                             f"{self.last_name.lower()}"
+                             f"{random_digit}@{self.domain}")
                 self.email = email
         self.role = role
         self.desc = roles_description[role]
         self.access_level = access_level[role]
         self.updated_at = kwargs.get('updated_at', datetime.now())
-        self.set_name()
         self.password = bcrypt.generate_password_hash('default')
-
-    def set_name(self):
-        if self.first_name is not None and self.last_name is not None:
-            self.name = " ".join([self.first_name, self.last_name])
-            self.updated_at = datetime.now()
-
-    def set_status(self, new_status: Boolean):
-        self.status = new_status
 
     def update_password(self, new_password):
+        """Change the default password for user object after creation
+        """
         self.password = bcrypt.generate_password_hash(new_password)
-        models.storage.save()
-        self.updated_at = datetime.now()
+        self.save()
 
     def reset_password(self):
+        """Reset password to default password for user object
+        """
         self.password = bcrypt.generate_password_hash('default')
-        models.storage.save()
-        self.updated_at = datetime.now()
-
-    def __str__(self):
-        return f"[{self.__class__.__name__}] ({self.staff_id}) {self.__dict__}"
+        self.save()
 
     def get_id(self):
+        """Get staff_id for object.
+        Override get_id in flask
+        """
         try:
             return str(self.staff_id)
         except AttributeError:
@@ -99,16 +135,46 @@ class Employee(UserMixin):
                                       - override `get_id`") from None
 
     def deactivate(self):
+        """Deactivate an account
+          - Deletes password to account
+          - Sets status to False
+        """
         self.password = None
         self.status = False
-        self.updated_at = datetime.now()
+        self.save()
+
+    def reactivate(self):
+        """Reactivate an account
+          - Sets password to default
+          - Sets status to True
+        """
+        self.password = bcrypt.generate_password_hash('default')
+        self.status = True
+        self.save()
+
+    def roles_descr(self):
+        """Returns role description for object"""
+        return roles_description[self.role]
+
+    def get_manager(self):
+        """Get the manager for the object
+        Returns manager object
+        """
+        manager_id = self.reports_to
+        manager = models.storage.get(manager_id)
+        return manager
 
     def save(self):
+        """Update user object after changes"""
         self.updated_at = datetime.now()
-        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
+        """Converts object to dictionary
+          - Convert created_at and updated_at (datetime)
+            to time format ("%Y-%m-%dT%H:%M:%S.%f")
+          - Deletes _sa_instance_state and password hash from dict
+        """
         dict_copy = self.__dict__.copy()
         dict_copy['created_at'] = dict_copy['created_at'].strftime(time_format)
         dict_copy['updated_at'] = dict_copy['updated_at'].strftime(time_format)
@@ -117,11 +183,11 @@ class Employee(UserMixin):
         del dict_copy['password']
         return dict_copy
 
-    def roles_descr(self):
-        return roles_description[self.role]
+    def __str__(self):
+        """String representation of object
 
-    def get_manager(self):
-        """Get the manager for SE"""
-        manager_id = self.reports_to
-        manager = models.storage.get(manager_id)
-        return manager
+        return (f"[{self.__class__.__name__}] "
+                f"({self.staff_id}) {self.__dict__}")
+        """
+        return (f"[{self.__class__.__name__}] "
+                f"({self.staff_id}) {self.to_dict()}")
