@@ -20,7 +20,7 @@ class TestDBStorage(unittest.TestCase):
     def test_all_returns_dict(self):
         """Test that all returns a dictionary"""
         self.assertIs(type(models.storage.all()), dict)
-        users = models.storage.all()
+        # users = models.storage.all()
 
     def test_new_method(self):
         """Test that all returns a dictionary"""
@@ -60,7 +60,7 @@ class TestDBStorage(unittest.TestCase):
         models.storage.delete(user)
         self.assertIn(user, models.storage._DBStorage__session.deleted)
 
-    def test_delete(self):
+    def test_delete2(self):
         """Test the delete method"""
         user = TM(staff_id=staff_id)
         user.email = "sale@wnourish.com"

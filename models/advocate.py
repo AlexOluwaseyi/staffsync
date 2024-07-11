@@ -156,6 +156,7 @@ class NH(SE):
     """
     __tablename__ = "advocates"
     __table_args__ = {'extend_existing': True}
+
     def __init__(self, *args, **kwargs):
         """Initialization for NH
         Inherits from SE and but defines roles, access_level
@@ -191,7 +192,6 @@ class TL(Employee, Base):
     """
     __tablename__ = "advocates"
     __table_args__ = {'extend_existing': True}
-
 
     def __init__(self, *args, **kwargs):
         """Initialization for NH

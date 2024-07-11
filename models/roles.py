@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from models.advocate import SE, NH, T2, TL
-from models.manager import TM, DM, OM, GM
+from models.advocate import NH, SE, T2, TL
 from models.bus_enablement import BE
 from models.employee import Employee
+from models.manager import DM, GM, OM, TM
 
 roles_dict = {
     'Employee': Employee,
