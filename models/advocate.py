@@ -154,6 +154,8 @@ class SE(Employee, Base):
 class NH(SE):
     """Class definition for New Hires
     """
+    __tablename__ = "advocates"
+    __table_args__ = {'extend_existing': True}
     def __init__(self, *args, **kwargs):
         """Initialization for NH
         Inherits from SE and but defines roles, access_level
@@ -166,9 +168,11 @@ class NH(SE):
         ...
 
 
-class T2(SE):
+class T2(Employee, Base):
     """Class definition for Tier 2 Engineers
     """
+    __tablename__ = "advocates"
+    __table_args__ = {'extend_existing': True}
 
     def __init__(self, *args, **kwargs):
         """Initialization for NH
@@ -182,9 +186,12 @@ class T2(SE):
         ...
 
 
-class TL(SE):
+class TL(Employee, Base):
     """Class definition for Technical Leads
     """
+    __tablename__ = "advocates"
+    __table_args__ = {'extend_existing': True}
+
 
     def __init__(self, *args, **kwargs):
         """Initialization for NH

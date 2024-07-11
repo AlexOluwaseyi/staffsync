@@ -11,6 +11,7 @@ from sqlalchemy import Column, Integer, String
 
 import models
 from models.employee import Base, Employee
+from models.permission import access_level
 
 
 class TM(Employee, Base):
@@ -35,23 +36,29 @@ class TM(Employee, Base):
         report to based on manager staff_id
         """
         from models.advocate import SE
-        advocates_staff_id = []
         advocates_dict = {}
-        advocates = models.storage.get(SE, reports_to=self.staff_id)
-        for advocate in advocates:
-            advocates_staff_id.append(advocate.staff_id)
-            advocates_dict[advocate.staff_id] = advocate.first_name \
-                + ' ' + advocate.last_name
+        employees = models.storage.all()
+        if employees:
+            for advocate in employees.values():
+                if advocate.reports_to == self.staff_id:
+                    advocates_dict[advocate.staff_id] = advocate
+        else: 
+            return None
         return advocates_dict
 
     def set_advocates(self):
         """Get the employees that report to this manager,
         and save to database column as json"""
         advocates = self.get_advocates()
+        advocates_dict = {}
+        for keys, values in advocates.items():
+            advocates_dict[keys] = values.name
         try:
-            self.in_charge_of = json.dumps(advocates.keys())
-        except (TypeError, json.JSONDecodeError):
-            self.in_charge_of = {}
+            print(advocates_dict)
+            self.in_charge_of = json.dumps(advocates_dict)
+        except (TypeError, json.JSONDecodeError) as e:
+            print(e)
+            self.in_charge_of = json.dumps({})
 
 
 class OM(Employee, Base):
@@ -67,6 +74,10 @@ class OM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'OM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
 
 
 class GM(Employee, Base):
@@ -82,6 +93,10 @@ class GM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'GM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
 
 
 class DM(Employee, Base):
@@ -97,3 +112,7 @@ class DM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'DM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value

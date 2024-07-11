@@ -127,3 +127,62 @@ section {
 .col-lg-3 {
     min-width: 33%;
 }
+
+.scrollable {
+    max-height: 200px;
+    /* Set this to the desired height */
+    overflow-y: hidden;
+    /* Initially hide the scrollbar */
+}
+
+.scrollable:hover {
+    overflow-y: scroll;
+    /* Show the scrollbar on hover */
+}
+
+/* WebKit browsers (Chrome, Safari) */
+.scrollable::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.scrollable:hover::-webkit-scrollbar {
+    width: 8px;
+    background: #f1f1f1;
+    /* Change to desired background color */
+}
+
+.scrollable:hover::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Change to desired thumb color */
+}
+
+.scrollable:hover::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Change to desired hover thumb color */
+}
+
+/* Firefox */
+.scrollable {
+    scrollbar-width: none;
+    /* Initially hide the scrollbar */
+}
+
+.scrollable:hover {
+    scrollbar-width: auto;
+    /* Show the scrollbar on hover */
+}
+
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.col-70 {
+    width: 70%;
+}
+
+.col-30 {
+    width: 30%;
+}

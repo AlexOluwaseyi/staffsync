@@ -24,6 +24,10 @@
     <symbol id="grid" viewBox="0 0 16 16">
       <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"></path>
     </symbol>
+    <symbol id="report" viewBox="0 0 16 16">
+      <path d="M3 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4.5L10.5 1H3zm7 1v3h3v9H3V2h7z"/>
+      <path d="M4 5h6v1H4V5zm0 2h6v1H4V7zm0 2h4v1H4V9z"/>
+    </symbol>
   </svg>
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto  text-decoration-none">
       <!-- <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg> -->
@@ -43,10 +47,18 @@
           <span>Profile</span>
         </a>
       </li>
+      {% if user|hasattr('schedules') %}
       <li>
         <a href="{{ url_for('schedules') }}" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
           <span>Schedules</span>
+        </a>
+      </li>
+      {% endif %}
+      <li>
+        <a href="#" class="nav-link ">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#report"></use></svg>
+          <span>Reports</span>
         </a>
       </li>
     </ul>
@@ -95,102 +107,130 @@
                   <i class="zmdi zmdi-account-o"></i>
               </div>
           </div>
-      </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 class="">Manager</h2>
-                  <p class="desc">{{ user.get_manager().name | default('None') }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-accounts-outline"></i>
-                  </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--green">
+                <h2 class="">Manager</h2>
+                <p class="desc">{{ user.get_manager().name | default('None') }}</p>
+                <div class="icon">
+                    <i class="zmdi zmdi-accounts-outline"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--orange">
+                <h2 class="">Staff ID</h2>
+                <p class="desc">{{ user.staff_id }}</p>
+                <div class="icon">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+            </div>
+        </div>
+        {% if user|hasattr('get_advocates') %}
+        <div class="col-md-6 col-lg-3">
+          <div class="statistic__item statistic__item--green">
+              <h2 class="">Advocates list</h2>
+              <div class="scrollable">
+              {% if user.get_advocates().values() %}
+                  <table>
+                      <tr>
+                          <th class="col-70">Advocate name</th>
+                          <th class="col-30">Staff ID</th>
+                      </tr>
+                      {% for advocate in user.get_advocates().values() %}
+                      <tr>
+                          <td class="col-70">{{ advocate.name }}</td>
+                          <td class="col-30">{{ advocate.staff_id }}</td>
+                      </tr>
+                      {% endfor %}
+                  </table>
+              {% else %}
+                  <p class="desc">None</p>
+              {% endif %}
+              </div>
+              <div class="icon">
+                  <i class="zmdi zmdi-accounts-outline"></i>
               </div>
           </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--orange">
-                  <h2 class="">Staff ID</h2>
-                  <p class="desc">{{ user.staff_id }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-shopping-cart"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--blue">
-                  <h2 class="">E-mail</h2>
-                  <p class="desc">{{ user.email }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          {% if user|hasattr('schedule') %}
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--red">
-                  <h2 class="">My schedule</h2>
-                  <p class="desc">{{ user.get_schedule(2024, 'May') | default('None') }}</p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
-          {% endif %}
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--blue">
-                  <h2 class="">Annual Leave</h2>
-                  <p class="desc">
-                    Annual leave available {{ user.annual_leave }}<br>
-                    Annual leave used {{ 10 - user.annual_leave }}
-                  </p>
-                  <div class="icon">
-                      <i class="zmdi zmdi-shopping-cart"></i>
-                  </div>
-              </div>
-          </div>
-          {% if user.access_level > 5 %}
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 class="">Generate Schedule</h2>
-                  <p class="desc">Create schedule for month.</p>
-                  <a href="{{ url_for('generateschedule')}}"><p>Click here to proceed >></p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-money"></i>
-                  </div>
-              </div>
-          </div>
-          {% endif %}
-          {% if user.access_level > 10 %}
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--orange">
-                  <h2 id="dynamic-text" class="">Reset a Password</h2>
-                  <p class="desc">Reset a user account password.</p>
-                  <a href="{{ url_for('resetbyadmin') }}"><p>Click here to proceed >></p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-account-o"></i>
-                  </div>
-              </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--red">
-                  <h2 class="">Create new record</h2>
-                  <span class="desc">Add new record here</span>
-                  <a href="{{ url_for('register') }}"><p>Click here to proceed >></p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-calendar-note"></i>
-                  </div>
-              </div>
-          </div>
+        </div>
+        {% endif %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--blue">
+                <h2 class="">E-mail</h2>
+                <p class="desc">{{ user.email }}</p>
+                <div class="icon">
+                    <i class="zmdi zmdi-calendar-note"></i>
+                </div>
+            </div>
+        </div>
+        {% if user|hasattr('schedule') %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--red">
+                <h2 class="">My schedule</h2>
+                <p class="desc">{{ user.get_schedule(current_year, current_month) | default('None') }}</p>
+                <div class="icon">
+                    <i class="zmdi zmdi-calendar-note"></i>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--blue">
+                <h2 class="">Annual Leave</h2>
+                <p class="desc">
+                  Annual leave available {{ user.annual_leave }}<br>
+                  Annual leave used {{ 10 - user.annual_leave }}
+                </p>
+                <div class="icon">
+                    <i class="zmdi zmdi-shopping-cart"></i>
+                </div>
+            </div>
+        </div>
+        {% if user.access_level > 5 %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--green">
+                <h2 class="">Generate Schedule</h2>
+                <p class="desc">Create schedule for month.</p>
+                <a href="{{ url_for('generateschedule')}}"><p>Click here to proceed >></p></a>
+                <div class="icon">
+                    <i class="zmdi zmdi-money"></i>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if user.access_level > 10 %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--orange">
+                <h2 id="dynamic-text" class="">Reset a Password</h2>
+                <p class="desc">Reset a user account password.</p>
+                <a href="{{ url_for('resetbyadmin') }}"><p>Click here to proceed >></p></a>
+                <div class="icon">
+                    <i class="zmdi zmdi-account-o"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--red">
+                <h2 class="">Create new record</h2>
+                <span class="desc">Add new record here</span>
+                <a href="{{ url_for('register') }}"><p>Click here to proceed >></p></a>
+                <div class="icon">
+                    <i class="zmdi zmdi-calendar-note"></i>
+                </div>
+            </div>
+        </div>
 
-          <div class="col-md-6 col-lg-3">
-              <div class="statistic__item statistic__item--green">
-                  <h2 class="number">Deactivate Account</h2>
-                  <span class="desc">Deactivate an account here.</span>
-                  <a href="{{ url_for('deactivate') }}"><p>Click here to proceed >></p></a>
-                  <div class="icon">
-                      <i class="zmdi zmdi-money"></i>
-                  </div>
-              </div>
-          </div>
-          {% endif %}
+        <div class="col-md-6 col-lg-3">
+            <div class="statistic__item statistic__item--green">
+                <h2 class="number">Deactivate Account</h2>
+                <span class="desc">Deactivate an account here.</span>
+                <a href="{{ url_for('deactivate') }}"><p>Click here to proceed >></p></a>
+                <div class="icon">
+                    <i class="zmdi zmdi-money"></i>
+                </div>
+            </div>
+        </div>
+        {% endif %}
       </div>
   </div>
   </section>

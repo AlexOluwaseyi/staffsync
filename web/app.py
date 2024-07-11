@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+import logging
 from datetime import timedelta
 
 from flask import (Flask, abort, flash, redirect, render_template,
@@ -52,7 +53,7 @@ def index():
     title = "Welcome"
     if 'session_id' in session:  # Check if the user is signed in
         user = current_user
-        return redirect(url_for('dashboard', user=user))
+        return redirect(url_for('admin'))
     return render_template('index.html', title=title)
 
 
@@ -143,7 +144,8 @@ def register(session_id=None):
     import calendar
     from datetime import datetime
 
-    from models.permission import access_level, roles_dict, sched_options
+    from models.permission import access_level, sched_options
+    from models.roles import roles_dict
 
     title = "Register"
     user = current_user
@@ -168,6 +170,8 @@ def register(session_id=None):
             reports_to = manager.staff_id
             entry = model(first_name=first_name, last_name=last_name,
                           reports_to=reports_to, role=role)
+            print(entry.to_dict())
+            models.storage.new(entry)
             entry.override_schedule(current_year, current_month, 'MTWTF')
             entry.save()
 
@@ -184,7 +188,10 @@ def register(session_id=None):
             entry = model(first_name=first_name, last_name=last_name,
                           staff_id=staff_id, email=email,
                           reports_to=reports_to, role=role)
-            entry.generate_schedule(current_year, current_month)
+            print(entry.to_dict())
+            models.storage.new(entry)
+            if hasattr(entry, 'generate_schedule'):
+                entry.generate_schedule(current_year, current_month)
             entry.save()
     return render_template('register.html', title=title, user=current_user,
                            access_level=access_level, roles_dict=roles_dict,
@@ -329,9 +336,6 @@ def resetbyadmin():
         if employee:
             employee.reset_password()
             msg = f'Password reset for {employee.name} successful.'
-            from time import sleep
-            sleep(3)
-            return redirect(referrer or url_for('admin'))
         else:
             msg = 'No user found with E-mail or Staff ID provided.'
     return render_template('resetbyadmin.html', title=title, msg=msg)
