@@ -30,10 +30,6 @@ class TM(Employee, Base):
         super().__init__(*args, **kwargs)
         self.designation = kwargs.get('designation', None)
         self.set_advocates()
-        role = kwargs.get('role', 'TM')
-        if role not in access_level:
-            raise ValueError(f"Invalid role: {role}")
-        self.role = access_level[role].value
 
     def get_advocates(self):
         """Get all support engineers that
@@ -54,10 +50,15 @@ class TM(Employee, Base):
         """Get the employees that report to this manager,
         and save to database column as json"""
         advocates = self.get_advocates()
+        advocates_dict = {}
+        for keys, values in advocates.items():
+            advocates_dict[keys] = values.name
         try:
-            self.in_charge_of = json.dumps(advocates.keys())
-        except (TypeError, json.JSONDecodeError):
-            self.in_charge_of = {}
+            print(advocates_dict)
+            self.in_charge_of = json.dumps(advocates_dict)
+        except (TypeError, json.JSONDecodeError) as e:
+            print(e)
+            self.in_charge_of = json.dumps({})
 
 
 class OM(Employee, Base):

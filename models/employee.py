@@ -173,7 +173,6 @@ class Employee(UserMixin):
 
     def save(self):
         """Update user object after changes"""
-        print(f'{self.__class__.__name__} object saved.')
         self.updated_at = datetime.now()
         models.storage.save()
 

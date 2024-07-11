@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+import logging
 from datetime import timedelta
 
 from flask import (Flask, abort, flash, redirect, render_template,
@@ -52,7 +53,7 @@ def index():
     title = "Welcome"
     if 'session_id' in session:  # Check if the user is signed in
         user = current_user
-        return redirect(url_for('admin', user=user))
+        return redirect(url_for('admin'))
     return render_template('index.html', title=title)
 
 
@@ -335,9 +336,6 @@ def resetbyadmin():
         if employee:
             employee.reset_password()
             msg = f'Password reset for {employee.name} successful.'
-            from time import sleep
-            sleep(3)
-            return redirect(referrer or url_for('admin'))
         else:
             msg = 'No user found with E-mail or Staff ID provided.'
     return render_template('resetbyadmin.html', title=title, msg=msg)

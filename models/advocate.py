@@ -151,7 +151,7 @@ class SE(Employee, Base):
                 {schedules_dict[year_str][month_str]}'
 
 
-class NH(Employee, Base):
+class NH(SE):
     """Class definition for New Hires
     """
     __tablename__ = "advocates"
