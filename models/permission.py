@@ -7,11 +7,6 @@ Module for definition of access level, permissions
 
 from enum import IntEnum
 
-from models.advocate import NH, SE, T2, TL
-from models.bus_enablement import BE
-from models.employee import Employee
-from models.manager import DM, GM, OM, TM
-
 
 class AccessLevel(IntEnum):
     """
@@ -36,7 +31,7 @@ class AccessLevel(IntEnum):
 String literal description for organizational roles
 """
 roles_description = {
-    'Super Admin': "Super Admin",
+    'SUPER_ADMIN': "Super Admin",
     'MGMT': "Admin.",
     "BE": "Business Enablement",
     "GM": "Global Manager",
@@ -56,7 +51,7 @@ roles_description = {
 Create a dictionary to map roles to access levels
 """
 access_level = {
-    "SUPER ADMIN": AccessLevel.SUPER_ADMIN,
+    "SUPER_ADMIN": AccessLevel.SUPER_ADMIN,
     "MGMT": AccessLevel.MGMT,
     "GM": AccessLevel.GM,
     "TM": AccessLevel.TM,
@@ -100,17 +95,3 @@ sched_options = {
             "6": "SSMTW",
             "7": "MTWTF"
         }
-
-
-roles_dict = {
-    'Employee': Employee,
-    'NH': NH,
-    'SE': SE,
-    'T2': T2,
-    'TL': TL,
-    'TM': TM,
-    'DM': DM,
-    'OM': OM,
-    'GM': GM,
-    'BE': BE,
-}

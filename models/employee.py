@@ -106,6 +106,8 @@ class Employee(UserMixin):
                              f"{self.last_name.lower()}"
                              f"{random_digit}@{self.domain}")
                 self.email = email
+        if not self.name:
+            self.name = f"{self.first_name.title()} {self.last_name.title()}"
         self.role = role
         self.desc = roles_description[role]
         self.access_level = access_level[role]
@@ -160,12 +162,18 @@ class Employee(UserMixin):
         """Get the manager for the object
         Returns manager object
         """
+        print('here')
+        print(self.reports_to)
         manager_id = self.reports_to
-        manager = models.storage.get(manager_id)
-        return manager
+        if manager_id:
+            manager = models.storage.get(manager_id)
+            return manager
+        else:
+            return None
 
     def save(self):
         """Update user object after changes"""
+        print(f'{self.__class__.__name__} object saved.')
         self.updated_at = datetime.now()
         models.storage.save()
 

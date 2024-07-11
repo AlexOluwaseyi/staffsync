@@ -7,19 +7,20 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from models.advocate import NH, SE, T2, TL
-from models.bus_enablement import BE
 from models.employee import Base
-from models.manager import DM, GM, OM, TM
 
 
 class DBStorage:
     """
     Database setup and instantiations
     """
+    from models.advocate import NH, SE, T2, TL
+    from models.bus_enablement import BE
+    from models.manager import DM, GM, OM, TM
     __engine = None
     __session = None
-    _class = [DM, GM, OM, TM, SE, NH, T2, TL, BE]
+    # _class = [DM, GM, OM, TM, SE, NH, T2, TL, BE]
+    _class = [TM, SE]
 
     def __init__(self):
         """Initializes the DB storage class"""
@@ -40,6 +41,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """Returns object dictionary of the data in database"""
+    
         all_dict = {}
         if cls is None:
             for class_type in self._class:

@@ -11,6 +11,7 @@ from sqlalchemy import Column, Integer, String
 
 import models
 from models.employee import Base, Employee
+from models.permission import access_level
 
 
 class TM(Employee, Base):
@@ -29,19 +30,24 @@ class TM(Employee, Base):
         super().__init__(*args, **kwargs)
         self.designation = kwargs.get('designation', None)
         self.set_advocates()
+        role = kwargs.get('role', 'TM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
 
     def get_advocates(self):
         """Get all support engineers that
         report to based on manager staff_id
         """
         from models.advocate import SE
-        advocates_staff_id = []
         advocates_dict = {}
-        advocates = models.storage.get(SE, reports_to=self.staff_id)
-        for advocate in advocates:
-            advocates_staff_id.append(advocate.staff_id)
-            advocates_dict[advocate.staff_id] = advocate.first_name \
-                + ' ' + advocate.last_name
+        employees = models.storage.all()
+        if employees:
+            for advocate in employees.values():
+                if advocate.reports_to == self.staff_id:
+                    advocates_dict[advocate.staff_id] = advocate
+        else: 
+            return None
         return advocates_dict
 
     def set_advocates(self):
@@ -67,6 +73,10 @@ class OM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'OM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
 
 
 class GM(Employee, Base):
@@ -82,6 +92,10 @@ class GM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'GM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
 
 
 class DM(Employee, Base):
@@ -97,3 +111,7 @@ class DM(Employee, Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        role = kwargs.get('role', 'DM')
+        if role not in access_level:
+            raise ValueError(f"Invalid role: {role}")
+        self.role = access_level[role].value
