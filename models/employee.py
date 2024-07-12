@@ -114,6 +114,16 @@ class Employee(UserMixin):
         self.updated_at = kwargs.get('updated_at', datetime.now())
         self.password = bcrypt.generate_password_hash('default')
 
+    def get_id(self):
+        """Get staff_id for object.
+        Override get_id in flask
+        """
+        try:
+            return str(self.staff_id)
+        except AttributeError:
+            raise NotImplementedError("No `staff_id` attribute \
+                                      - override `get_id`") from None
+
     def update_password(self, new_password):
         """Change the default password for user object after creation
         """
@@ -125,16 +135,6 @@ class Employee(UserMixin):
         """
         self.password = bcrypt.generate_password_hash('default')
         self.save()
-
-    def get_id(self):
-        """Get staff_id for object.
-        Override get_id in flask
-        """
-        try:
-            return str(self.staff_id)
-        except AttributeError:
-            raise NotImplementedError("No `staff_id` attribute \
-                                      - override `get_id`") from None
 
     def deactivate(self):
         """Deactivate an account
@@ -162,8 +162,6 @@ class Employee(UserMixin):
         """Get the manager for the object
         Returns manager object
         """
-        print('here')
-        print(self.reports_to)
         manager_id = self.reports_to
         if manager_id:
             manager = models.storage.get(manager_id)

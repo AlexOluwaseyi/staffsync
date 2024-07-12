@@ -3,6 +3,7 @@
 import json
 import logging
 from datetime import timedelta
+from logging import Filter
 
 from flask import (Flask, abort, redirect, render_template, request, session,
                    url_for)
@@ -29,14 +30,26 @@ bcrypt = Bcrypt()
 login_manager.init_app(app)
 bcrypt.init_app(app)
 
+
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s\
-                    %(name)s %(threadName)s : %(message)s',
+logging.basicConfig(level=logging.INFO, format=f'%(asctime)s %(levelname)s '
+                    f'%(name)s %(threadName)s : %(message)s',
                     handlers=[
                         logging.FileHandler("app.log"),
                         logging.StreamHandler()
                     ])
 logger = logging.getLogger(__name__)
+
+
+class NoStaticFilter(Filter):
+    """Logging filter to skip logging of static files"""
+    def filter(self, record):
+        return not record.getMessage().startswith('GET /static/')
+
+
+logger.addFilter(NoStaticFilter())
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.addFilter(NoStaticFilter())
 
 
 @app.template_filter('hasattr')
@@ -52,7 +65,14 @@ app.jinja_env.filters['hasattr'] = hasattr_filter
 def handle_exception(e):
     """Logging Error handler function"""
     logger.error(f"An error occurred: {e}", exc_info=True)
-    return render_template('error.html', error=str(e)), 500
+    abort(500)
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    """Error 404 handler"""
+    logger.error(f"404 Error: {error}, URL: {request.url}")
+    abort(404)
 
 
 @login_manager.user_loader
@@ -125,7 +145,7 @@ def dashboard(session_id=None):
     """
     title = "Dashboard"
     user = current_user
-    if user.access_level >= 5:
+    if user.access_level > 5:
         title = "Admin Dashboard"
     return render_template('dashboard.html', title=title, user=current_user)
 
@@ -140,7 +160,7 @@ def admin(session_id=None):
     """
     title = "Dashboard"
     user = current_user
-    if user.access_level >= 5:
+    if user.access_level > 5:
         title = "Admin Dashboard"
     logger.info(f"{user.name} signed in to {title}.")
     return render_template('admin.html', title=title, user=current_user)
@@ -241,11 +261,12 @@ def deactivate():
         abort(403)
 
     if request.method == 'POST':
-        if 'staff_id' in request.form:
+        account_selector = request.form.get('account_selector')
+        if account_selector == 'staff_id':
             staff_id = request.form.get('staff_id')
             employee = models.storage.get(staff_id=staff_id)
-        elif 'email' in request.form:
-            email = request.form['email']
+        elif account_selector in 'email':
+            email = request.form.get('email')
             employee = models.storage.get(email=email)
         if employee:
             employee.deactivate()
@@ -398,8 +419,8 @@ def logout():
     user.authenticated = False
     models.storage.session.add(user)
     models.storage.session.commit()
-    logout_user()
     logger.info(f"User {user.email} logged out")
+    logout_user()
     msg = 'You have been logged out successfully.'
     return redirect(url_for('login', title=title, msg=msg))
 
