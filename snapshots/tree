@@ -1,0 +1,211 @@
+.
+|-- README.md
+|-- app.log
+|-- check.py
+|-- generated_advocates_data.csv
+|-- generated_managers_data.csv
+|-- generator.ipynb
+|-- models
+|   |-- __init__.py
+|   |-- advocate.py
+|   |-- base_model.py
+|   |-- bus_enablement.py
+|   |-- employee.py
+|   |-- engine
+|   |   |-- __init__.py
+|   |   `-- db.py
+|   |-- manager.py
+|   |-- permission.py
+|   `-- roles.py
+|-- notes.md
+|-- reports_to,in_charge_of,designation,id,s.txt
+|-- requirement.txt
+|-- staffsync.db
+|-- staffsync.db-x-advocates-8-password.bin
+|-- tests
+|   |-- __init__.py
+|   |-- test_engine
+|   |   |-- __init__.py
+|   |   `-- test_db.py
+|   `-- test_model
+|       |-- __init__.py
+|       |-- test_advocate.py
+|       |-- test_base_model.py
+|       `-- test_manager.py
+|-- tree
+`-- web
+    |-- __init__.py
+    |-- app.py
+    |-- creds.py
+    |-- static
+    |   |-- fonts
+    |   |   |-- font-awesome-4.7.0
+    |   |   |   |-- HELP-US-OUT.txt
+    |   |   |   |-- css
+    |   |   |   |   |-- font-awesome.css
+    |   |   |   |   `-- font-awesome.min.css
+    |   |   |   |-- fonts
+    |   |   |   |   |-- FontAwesome.otf
+    |   |   |   |   |-- fontawesome-webfont.eot
+    |   |   |   |   |-- fontawesome-webfont.svg
+    |   |   |   |   |-- fontawesome-webfont.ttf
+    |   |   |   |   |-- fontawesome-webfont.woff
+    |   |   |   |   `-- fontawesome-webfont.woff2
+    |   |   |   |-- less
+    |   |   |   |   |-- animated.less
+    |   |   |   |   |-- bordered-pulled.less
+    |   |   |   |   |-- core.less
+    |   |   |   |   |-- fixed-width.less
+    |   |   |   |   |-- font-awesome.less
+    |   |   |   |   |-- icons.less
+    |   |   |   |   |-- larger.less
+    |   |   |   |   |-- list.less
+    |   |   |   |   |-- mixins.less
+    |   |   |   |   |-- path.less
+    |   |   |   |   |-- rotated-flipped.less
+    |   |   |   |   |-- screen-reader.less
+    |   |   |   |   |-- stacked.less
+    |   |   |   |   `-- variables.less
+    |   |   |   `-- scss
+    |   |   |       |-- _animated.scss
+    |   |   |       |-- _bordered-pulled.scss
+    |   |   |       |-- _core.scss
+    |   |   |       |-- _fixed-width.scss
+    |   |   |       |-- _icons.scss
+    |   |   |       |-- _larger.scss
+    |   |   |       |-- _list.scss
+    |   |   |       |-- _mixins.scss
+    |   |   |       |-- _path.scss
+    |   |   |       |-- _rotated-flipped.scss
+    |   |   |       |-- _screen-reader.scss
+    |   |   |       |-- _stacked.scss
+    |   |   |       |-- _variables.scss
+    |   |   |       `-- font-awesome.scss
+    |   |   |-- iconic
+    |   |   |   |-- css
+    |   |   |   |   |-- material-design-iconic-font.css
+    |   |   |   |   `-- material-design-iconic-font.min.css
+    |   |   |   `-- fonts
+    |   |   |       |-- Material-Design-Iconic-Font.eot
+    |   |   |       |-- Material-Design-Iconic-Font.svg
+    |   |   |       |-- Material-Design-Iconic-Font.ttf
+    |   |   |       |-- Material-Design-Iconic-Font.woff
+    |   |   |       `-- Material-Design-Iconic-Font.woff2
+    |   |   `-- poppins
+    |   |       |-- Poppins-Black.ttf
+    |   |       |-- Poppins-BlackItalic.ttf
+    |   |       |-- Poppins-Bold.ttf
+    |   |       |-- Poppins-BoldItalic.ttf
+    |   |       |-- Poppins-ExtraBold.ttf
+    |   |       |-- Poppins-ExtraBoldItalic.ttf
+    |   |       |-- Poppins-ExtraLight.ttf
+    |   |       |-- Poppins-ExtraLightItalic.ttf
+    |   |       |-- Poppins-Italic.ttf
+    |   |       |-- Poppins-Light.ttf
+    |   |       |-- Poppins-LightItalic.ttf
+    |   |       |-- Poppins-Medium.ttf
+    |   |       |-- Poppins-MediumItalic.ttf
+    |   |       |-- Poppins-Regular.ttf
+    |   |       |-- Poppins-SemiBold.ttf
+    |   |       |-- Poppins-SemiBoldItalic.ttf
+    |   |       |-- Poppins-Thin.ttf
+    |   |       `-- Poppins-ThinItalic.ttf
+    |   |-- images
+    |   |   |-- StaffSync-black@4x.png
+    |   |   |-- StaffSync-white@4x.png
+    |   |   |-- StaffSync@4x.png
+    |   |   |-- android-chrome-192x192.png
+    |   |   |-- android-chrome-512x512.png
+    |   |   |-- apple-touch-icon.png
+    |   |   |-- bg-01.jpg
+    |   |   |-- browserconfig.xml
+    |   |   |-- favicon-16x16.png
+    |   |   |-- favicon-32x32.png
+    |   |   |-- favicon.ico
+    |   |   |-- icons
+    |   |   |   `-- favicon.ico
+    |   |   |-- mstile-150x150.png
+    |   |   |-- safari-pinned-tab.svg
+    |   |   `-- site.webmanifest
+    |   |-- scripts
+    |   |   |-- bootstrap
+    |   |   |   `-- min.js
+    |   |   |-- dialog.js
+    |   |   |-- gensched.js
+    |   |   |-- main.js
+    |   |   |-- register.js
+    |   |   `-- switch_theme.js
+    |   |-- styles
+    |   |   |-- dialog.css
+    |   |   |-- main.css
+    |   |   |-- sidebar.css
+    |   |   |-- sign-in.css
+    |   |   |-- switch_theme.css
+    |   |   |-- theme.css
+    |   |   `-- util.css
+    |   `-- vendor
+    |       |-- animate
+    |       |   `-- animate.css
+    |       |-- animsition
+    |       |   |-- css
+    |       |   |   |-- animsition.css
+    |       |   |   `-- animsition.min.css
+    |       |   `-- js
+    |       |       |-- animsition.js
+    |       |       `-- animsition.min.js
+    |       |-- bootstrap
+    |       |   |-- css
+    |       |   |   |-- bootstrap-grid.css
+    |       |   |   |-- bootstrap-grid.css.map
+    |       |   |   |-- bootstrap-grid.min.css
+    |       |   |   |-- bootstrap-grid.min.css.map
+    |       |   |   |-- bootstrap-reboot.css
+    |       |   |   |-- bootstrap-reboot.css.map
+    |       |   |   |-- bootstrap-reboot.min.css
+    |       |   |   |-- bootstrap-reboot.min.css.map
+    |       |   |   |-- bootstrap.css
+    |       |   |   |-- bootstrap.css.map
+    |       |   |   |-- bootstrap.min.css
+    |       |   |   `-- bootstrap.min.css.map
+    |       |   `-- js
+    |       |       |-- bootstrap.js
+    |       |       |-- bootstrap.min.js
+    |       |       |-- popper.js
+    |       |       |-- popper.min.js
+    |       |       `-- tooltip.js
+    |       |-- countdowntime
+    |       |   `-- countdowntime.js
+    |       |-- css-hamburgers
+    |       |   |-- hamburgers.css
+    |       |   `-- hamburgers.min.css
+    |       |-- daterangepicker
+    |       |   |-- daterangepicker.css
+    |       |   |-- daterangepicker.js
+    |       |   |-- moment.js
+    |       |   `-- moment.min.js
+    |       |-- jquery
+    |       |   `-- jquery-3.2.1.min.js
+    |       |-- perfect-scrollbar
+    |       |   |-- perfect-scrollbar.css
+    |       |   `-- perfect-scrollbar.min.js
+    |       `-- select2
+    |           |-- select2.css
+    |           |-- select2.js
+    |           |-- select2.min.css
+    |           `-- select2.min.js
+    `-- templates
+        |-- admin.html
+        |-- dashboard.html
+        |-- deactivate.html
+        |-- genschedule.html
+        |-- index.html
+        |-- layout.html
+        |-- login.html
+        |-- profile.html
+        |-- register.html
+        |-- resetbyadmin.html
+        |-- resetpassword.html
+        |-- schedules.html
+        `-- temp.html
+
+37 directories, 171 files

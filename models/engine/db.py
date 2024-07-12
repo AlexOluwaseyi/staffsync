@@ -41,7 +41,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """Returns object dictionary of the data in database"""
-    
+
         all_dict = {}
         if cls is None:
             for class_type in self._class:

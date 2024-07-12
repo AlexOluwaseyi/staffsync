@@ -1,0 +1,54 @@
+.
+|-- README.md
+|-- app.log
+|-- check.py
+|-- generator.ipynb
+|-- models
+|   |-- __init__.py
+|   |-- advocate.py
+|   |-- base_model.py
+|   |-- bus_enablement.py
+|   |-- employee.py
+|   |-- engine
+|   |   |-- __init__.py
+|   |   `-- db.py
+|   |-- manager.py
+|   |-- permission.py
+|   `-- roles.py
+|-- notes.md
+|-- requirement.txt
+|-- staffsync.db
+|-- tests
+|   |-- __init__.py
+|   |-- test_engine
+|   |   |-- __init__.py
+|   |   `-- test_db.py
+|   `-- test_model
+|       |-- __init__.py
+|       |-- test_advocate.py
+|       |-- test_base_model.py
+|       `-- test_manager.py
+|-- tree
+|-- tree2
+`-- web
+    |-- __init__.py
+    |-- app.py
+    |-- creds.py
+    |-- static
+        `-- ...
+    `-- templates
+        |-- admin.html
+        |-- dashboard.html
+        |-- deactivate.html
+        |-- genschedule.html
+        |-- index.html
+        |-- layout.html
+        |-- login.html
+        |-- profile.html
+        |-- register.html
+        |-- resetbyadmin.html
+        |-- resetpassword.html
+        |-- schedules.html
+        `-- temp.html
+
+13 directories, 71 files

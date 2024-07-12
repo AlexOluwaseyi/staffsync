@@ -35,14 +35,13 @@ class TM(Employee, Base):
         """Get all support engineers that
         report to based on manager staff_id
         """
-        from models.advocate import SE
         advocates_dict = {}
         employees = models.storage.all()
         if employees:
             for advocate in employees.values():
                 if advocate.reports_to == self.staff_id:
                     advocates_dict[advocate.staff_id] = advocate
-        else: 
+        else:
             return None
         return advocates_dict
 

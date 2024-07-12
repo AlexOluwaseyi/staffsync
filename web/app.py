@@ -3,9 +3,10 @@
 import json
 import logging
 from datetime import timedelta
+from logging import Filter
 
-from flask import (Flask, abort, flash, redirect, render_template,
-                   request, session, url_for)
+from flask import (Flask, abort, redirect, render_template, request, session,
+                   url_for)
 from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
@@ -30,12 +31,48 @@ login_manager.init_app(app)
 bcrypt.init_app(app)
 
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format=f'%(asctime)s %(levelname)s '
+                    f'%(name)s %(threadName)s : %(message)s',
+                    handlers=[
+                        logging.FileHandler("app.log"),
+                        logging.StreamHandler()
+                    ])
+logger = logging.getLogger(__name__)
+
+
+class NoStaticFilter(Filter):
+    """Logging filter to skip logging of static files"""
+    def filter(self, record):
+        return not record.getMessage().startswith('GET /static/')
+
+
+logger.addFilter(NoStaticFilter())
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.addFilter(NoStaticFilter())
+
+
 @app.template_filter('hasattr')
 def hasattr_filter(obj, attr):
+    """Custon function to check attribute in jinja"""
     return hasattr(obj, attr)
 
 
 app.jinja_env.filters['hasattr'] = hasattr_filter
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Logging Error handler function"""
+    logger.error(f"An error occurred: {e}", exc_info=True)
+    abort(500)
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    """Error 404 handler"""
+    logger.error(f"404 Error: {error}, URL: {request.url}")
+    abort(404)
 
 
 @login_manager.user_loader
@@ -52,7 +89,6 @@ def index():
     """Index page"""
     title = "Welcome"
     if 'session_id' in session:  # Check if the user is signed in
-        user = current_user
         return redirect(url_for('admin'))
     return render_template('index.html', title=title)
 
@@ -63,6 +99,7 @@ def login():
     """
     title = "Login"
     msg = request.args.get('msg', '')
+    logger.info("Login page accessed")
 
     if request.method == 'POST':
         email = request.form['email'].lower()
@@ -75,6 +112,7 @@ def login():
                 pw_check = bcrypt.check_password_hash(password,
                                                       password_input)
                 if pw_check:
+                    logger.info(f"User {email} logged in successfully")
                     user.authenticated = True
                     models.storage.session.add(user)
                     models.storage.session.commit()
@@ -84,11 +122,14 @@ def login():
                     session['session_id'] = session_id
                     return redirect(url_for('admin', session_id=session_id))
                 else:
+                    logger.warning(f"User {email} entered a wrong password")
                     msg = 'You have entered a wrong password.'
             else:
+                logger.warning(f"Account for {user.name} has been deactivated")
                 msg = f'Account for {user.name} has been deactivated'
 
         else:
+            logger.warning(f"No user found with email {email}")
             msg = 'No user found with this email'
 
     return render_template('login.html', title=title, msg=msg)
@@ -104,7 +145,7 @@ def dashboard(session_id=None):
     """
     title = "Dashboard"
     user = current_user
-    if user.access_level >= 5:
+    if user.access_level > 5:
         title = "Admin Dashboard"
     return render_template('dashboard.html', title=title, user=current_user)
 
@@ -119,8 +160,9 @@ def admin(session_id=None):
     """
     title = "Dashboard"
     user = current_user
-    if user.access_level >= 5:
+    if user.access_level > 5:
         title = "Admin Dashboard"
+    logger.info(f"{user.name} signed in to {title}.")
     return render_template('admin.html', title=title, user=current_user)
 
 
@@ -149,7 +191,10 @@ def register(session_id=None):
 
     title = "Register"
     user = current_user
+    current_url = request.url
     if user.access_level <= 10:
+        logger.info(f"{user.name} with access level {user.access_level} "
+                    f"tries to access {current_url}.")
         abort(403)
 
     month_int = datetime.now().month
@@ -170,10 +215,11 @@ def register(session_id=None):
             reports_to = manager.staff_id
             entry = model(first_name=first_name, last_name=last_name,
                           reports_to=reports_to, role=role)
-            print(entry.to_dict())
             models.storage.new(entry)
             entry.override_schedule(current_year, current_month, 'MTWTF')
             entry.save()
+            logger.info(f"{user.name} created account for {entry.email}"
+                        f" [{entry.staff_id}]")
 
         elif option_selector == 'existing':
             first_name = request.form.get('first_name2')
@@ -188,11 +234,12 @@ def register(session_id=None):
             entry = model(first_name=first_name, last_name=last_name,
                           staff_id=staff_id, email=email,
                           reports_to=reports_to, role=role)
-            print(entry.to_dict())
             models.storage.new(entry)
             if hasattr(entry, 'generate_schedule'):
                 entry.generate_schedule(current_year, current_month)
             entry.save()
+            logger.info(f"{user.name} created account for {entry.email} "
+                        f"[{entry.staff_id}]")
     return render_template('register.html', title=title, user=current_user,
                            access_level=access_level, roles_dict=roles_dict,
                            sched_options=sched_options, managers=managers)
@@ -207,19 +254,25 @@ def deactivate():
     title = "Deactivate"
     msg = ''
     user = current_user
+    current_url = request.url
     if user.access_level <= 10:
+        logger.info(f"{user.name} with access level {user.access_level} "
+                    f"tries to access {current_url}.")
         abort(403)
 
     if request.method == 'POST':
-        if 'staff_id' in request.form:
+        account_selector = request.form.get('account_selector')
+        if account_selector == 'staff_id':
             staff_id = request.form.get('staff_id')
             employee = models.storage.get(staff_id=staff_id)
-        elif 'email' in request.form:
-            email = request.form['email']
+        elif account_selector in 'email':
+            email = request.form.get('email')
             employee = models.storage.get(email=email)
         if employee:
             employee.deactivate()
             employee.save()
+            logger.info(f"{user.name} deactivated account "
+                        f"for {employee.email}")
             msg = f'Account for {employee.name} deactivated successful.'
             return redirect(url_for('admin'))
     return render_template('deactivate.html', title=title, msg=msg)
@@ -254,7 +307,10 @@ def generateschedule():
     title = "Generate Schedule"
     msg = ''
     user = current_user
+    current_url = request.url
     if user.access_level <= 5:
+        logger.info(f"{user.name} with access level {user.access_level} "
+                    f"tries to access {current_url}.")
         abort(403)
 
     if request.method == 'POST':
@@ -267,6 +323,8 @@ def generateschedule():
             if employee:
                 employee.generate_schedule(year, month)
                 employee.save()
+                logger.info(f"{user.name} creates schedule for "
+                            f"{employee.name} {month.title()}, {year}.")
                 msg = (f'Schedule for {employee.name} for {month.title()} '
                        f'{year} created successfully.')
             else:
@@ -282,6 +340,8 @@ def generateschedule():
             for employee in filtered_employee:
                 employee.generate_schedule(year, month)
                 employee.save()
+            logger.info(f"{user.name} creates schedule for all for "
+                        f"{month.title()}, {year}.")
             msg = f'Schedule for {month.title()} {year} created successfully.'
         # return redirect(url_for('admin'))
 
@@ -305,10 +365,12 @@ def resetpassword():
         pw_check = bcrypt.check_password_hash(user.password, old_password)
         if pw_check:
             user.update_password(new_password)
+            logger.info(f"{user.name} resets password to account.")
             msg = 'Password changed successfully.'
             logout_user()
             return redirect(url_for('login', title='Login', msg=msg))
         else:
+            logger.info(f"{user.name} enters wrong password during reset.")
             msg = 'Old password is not correct.'
     return render_template('resetpassword.html', title=title, msg=msg)
 
@@ -321,11 +383,14 @@ def resetbyadmin():
     the employee with forgotten password.
     """
     user = current_user
+    current_url = request.url
+
     if user.access_level <= 10:
+        logger.info(f"{user.name} with access level {user.access_level} "
+                    f"tries to access {current_url}.")
         abort(403)
     title = 'Reset by Admin'
     msg = ''
-    referrer = request.referrer
     if request.method == 'POST':
         if 'staff_id' in request.form:
             staff_id = request.form['staff_id']
@@ -335,8 +400,10 @@ def resetbyadmin():
             employee = models.storage.get(email=email)
         if employee:
             employee.reset_password()
+            logger.info(f"Password reset for {employee.name} by {user.name}.")
             msg = f'Password reset for {employee.name} successful.'
         else:
+            logger.info("Wrong credentials for password reset")
             msg = 'No user found with E-mail or Staff ID provided.'
     return render_template('resetbyadmin.html', title=title, msg=msg)
 
@@ -352,9 +419,9 @@ def logout():
     user.authenticated = False
     models.storage.session.add(user)
     models.storage.session.commit()
+    logger.info(f"User {user.email} logged out")
     logout_user()
     msg = 'You have been logged out successfully.'
-    flash('You have been logged out successfully.', 'success')
     return redirect(url_for('login', title=title, msg=msg))
 
 
