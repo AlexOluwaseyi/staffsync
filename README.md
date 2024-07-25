@@ -16,7 +16,7 @@ StaffSync (v 1.0) is developed with HTML, CSS and JavaScript for its front-end. 
 - [Database Engine](https://github.com/AlexOluwaseyi/staffsync/blob/main/models/engine/db.py)
 ### Web Static and Flask Templates
 - [Flask Template](https://github.com/AlexOluwaseyi/staffsync/tree/main/web/templates)
-- [Static web files](https://github.com/AlexOluwaseyi/staffsync/tree/main/web)
+- [Static web files](https://github.com/AlexOluwaseyi/staffsync/tree/main/web/static)
 ### App
 - [Flask App](https://github.com/AlexOluwaseyi/staffsync/blob/main/web/app.py)
 
