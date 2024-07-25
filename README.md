@@ -1,4 +1,14 @@
 # StaffSync
+
+## Table of Contents
+- [About StaffSync](#About-StaffSync)
+- [Technology](#Technology)
+- [Code Snippet](#Code-Snippet)
+- [Structure](#Structure)
+- [Development](#Development)
+- [Future of StaffSync](#Future-of-StaffSync)
+- [Limitations](#Limitations)
+
 ## About StaffSync
 StaffSync is an employee management web-based app which helps to manage and organize employees and members of staff of an organization. 
 
@@ -34,5 +44,5 @@ python3 -m web.app
 ## Future of StaffSync
 StaffSync will continue to evolve into a model for implementation in large and complex organizations to replace existing structures.
 
-## Limitation
+## Limitations
 StaffSync assumes that its features would be implemented behind a secured system. Future versions of StaffSync would remove this (and every other) assumptions to promote implementation for all type organization.
