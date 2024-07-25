@@ -1,4 +1,4 @@
-# StaffSync
+# StaffSync (v1.0)
 
 ## Table of Contents
 - [About StaffSync](#About-StaffSync)
@@ -43,6 +43,8 @@ python3 -m web.app
 
 ## Future of StaffSync
 StaffSync will continue to evolve into a model for implementation in large and complex organizations to replace existing structures.
+StaffSync remains to include many other features that may benefit small and large organizations
+Improved UI/UX by revising the front-end aspect of the project to improve acceptability.
 
 ## Limitations
 StaffSync assumes that its features would be implemented behind a secured system. Future versions of StaffSync would remove this (and every other) assumptions to promote implementation for all type organization.
